@@ -1,0 +1,12 @@
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/Project.iml
+.idea/workspace.xml
+CMakeLists.txt
+cmake-build-debug/CMakeCache.txt
+cmake-build-debug/CMakeFiles
+cmake-build-debug/cmake_install.cmake
+cmake-build-debug/ConfigInterpreter.h
+cmake-build-debug/Makefile
+cmake-build-debug/Project.cbp
