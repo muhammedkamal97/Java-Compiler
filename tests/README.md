@@ -4,4 +4,4 @@
 
  [Instructions](https://www.jetbrains.com/help/clion/creating-google-test-run-debug-configuration-for-test.html)
 
- More links are presented in the documents section on testing practices
+ More links are presented in the [documents](../documents) section on testing practices
