@@ -34,7 +34,7 @@ project(porject)
 add_subdirectory(lib/gtest)
 ```
 
-> see the [readme](../tests/README.me) in the tests library for more on using gtest with clion
+> see the [readme](tests/README.me) in the tests library for more on using gtest with clion
 
 4. load the cmake at the top level directory of your project
 5. Happy Coding!
