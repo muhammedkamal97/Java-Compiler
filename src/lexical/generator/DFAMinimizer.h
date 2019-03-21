@@ -13,14 +13,14 @@ using namespace std;
 
 class DFAMinimizer {
 private:
-    int **transition_map;
+    int **transition_array;
     pair<int,int> *map_size;
 public:
-    DFAMinimizer(vector<int[]> *transition_diagram);
+    DFAMinimizer(vector<int[]> *input_transition_array);
     void minimize();
 
-    int **getTransition_map() const {
-        return transition_map;
+    int **getTransition_array() const {
+        return transition_array;
     }
 
     pair<int, int> *getMap_size() const {

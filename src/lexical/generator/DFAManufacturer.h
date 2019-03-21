@@ -14,15 +14,15 @@ using namespace std;
 
 class DFAManufacturer {
 private:
-    vector<int[]> *transition_diagram;
+    vector<int[]> *transition_array;
 
 public:
-    DFAManufacturer(vector<set<int>[]> *transition_diagram);
+    DFAManufacturer(vector<set<int>[]> *nfa_transition_array);
 
     void generate_dfa();
 
-    vector<int[]> *getTransition_diagram() const {
-        return transition_diagram;
+    vector<int[]> *getTransition_array() const {
+        return transition_array;
     }
 };
 

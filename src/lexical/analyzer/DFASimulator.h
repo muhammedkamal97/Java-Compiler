@@ -6,7 +6,7 @@
 #define PROJECT_DFASIMULATOR_H
 
 #include <map>
-#include "DFAMachine.h"
+#include "DFA.h"
 
 using namespace std;
 
@@ -16,14 +16,14 @@ enum operation_mode {
 class DFASimulator {
 
 private:
-    DFAMachine *automata;
+    DFA *automata;
     int last_acceptance_state;
     int index_at_last_accepted_input;
 
 public:
 
 
-    DFASimulator(int **transition_map, pair<int, int> transition_size, map<char, int> *input_map, fstream *input);
+    DFASimulator(int **transition_array, pair<int, int> transition_size, map<char, int> *input_map, fstream *input);
 
     void process_next_token();
 

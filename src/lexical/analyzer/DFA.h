@@ -2,17 +2,17 @@
 // Created by mario_hunter on 3/20/19.
 //
 
-#ifndef PROJECT_DFAMACHINE_H
-#define PROJECT_DFAMACHINE_H
+#ifndef PROJECT_DFA_H
+#define PROJECT_DFA_H
 
 #include <map>
 #include <set>
 
 using namespace std;
 
-class DFAMachine {
+class DFA {
 public:
-    DFAMachine(int **transition_map, pair<int, int> transition_size, map<char, int> *input_map,
+    DFA(int **transition_array, pair<int, int> transition_size, map<char, int> *input_map,
                set<int> acceptance_states);
 
     void move(char inp);
@@ -29,4 +29,4 @@ public:
 };
 
 
-#endif //PROJECT_DFAMACHINE_H
+#endif //PROJECT_DFA_H
