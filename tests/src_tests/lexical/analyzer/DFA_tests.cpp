@@ -8,12 +8,12 @@
 class DFATests : public ::testing::Test {
 
 protected:
-    void SetUp() {
+    virtual void SetUp() {
         for (int i = 0; i < 5; ++i)
             transition_array[i] = new int[2] {array[i][0], array[i][1]};
         dfa = new DFA(transition_array, transition_size, &input_map, initial_state, acceptance_states);
-        printf("%d", dfa->get_current_state());
     }
+
     int **transition_array = new int*[5];
     int array[5][2] = {
             {1, 2},
@@ -28,6 +28,7 @@ protected:
     set<int> acceptance_states = {1, 2, 4};
 
     DFA *dfa;
+    
 };
 
 TEST_F(DFATests, startsAtInitialState) {
@@ -72,3 +73,21 @@ TEST_F(DFATests, correctLastAcceptanceStateMultipleInput) {
     }
     ASSERT_EQ(dfa->get_last_accepted_state(), 2);
 }
+
+TEST_F(DFATests, invalidTransitionGiveError) {
+    char input[2] = {'b', 'b'};
+    for (int i = 0; i < 2; ++i) {
+        dfa->move(input[i]);
+    }
+    ASSERT_TRUE(dfa->is_error());
+}
+
+TEST_F(DFATests, resetWorks) {
+    char input[2] = {'b', 'a'};
+    for (int i = 0; i < 2; ++i) {
+        dfa->move(input[i]);
+    }
+    dfa->reset();
+    ASSERT_EQ(dfa->get_current_state(), 0);
+}
+
