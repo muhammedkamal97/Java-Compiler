@@ -2,6 +2,7 @@
 // Created by Muhammed on 3/24/2019.
 //
 
+
 #include "NFA.h"
 
 static string epsilon = "";
@@ -166,6 +167,16 @@ vector<vector<set<int>>> NFA::get_trasition_array() {
         }
         it1++;
     }
+    MetaData meta = {make_pair(all_states.size(),260),
+                     0,0,0,260};
+    map<int,int> accepted_patterens;
+    it1 = accepted.begin();
+    while(it1!=accepted.end()){
+        //accepted_patterens[(*it1)->label] = index;//TODO index of the tokenType in the array of Token.
+        it1++;
+    }
+
+
     return transition_array;
 }
 

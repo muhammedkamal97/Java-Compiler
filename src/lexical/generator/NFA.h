@@ -7,6 +7,8 @@
 
 #include <bits/stdc++.h>
 #include "NFAstate.h"
+#include <lexical/MetaData.h>
+
 using namespace std;
 
 class NFA {
