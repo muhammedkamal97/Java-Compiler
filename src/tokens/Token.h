@@ -7,11 +7,12 @@
 
 #include<map>
 #include <string>
+#include "TokenType.h"
 
 using namespace std;
 
 struct Token {
-    string name;
+    TokenType type;
     string lexeme;
     map<string, void *> *attr;
 };
