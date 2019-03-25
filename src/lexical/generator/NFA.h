@@ -21,14 +21,14 @@ public:
     vector<vector<set<int>>> transition_array;
     NFA(NFAstate* starting,NFAstate* ending);
     NFA(char c);
-
+    NFA(string word);
     vector<vector<set<int>>> get_trasition_array();
 
     static NFA* concatinate(NFA* s1,NFA* s2);
     static NFA* union_(NFA* s1,NFA* s2);
     static NFA* kleene_clouser(NFA* s);
     static NFA* positive_clouser(NFA* s);
-    static NFA* range(char c1, char c2);
+    static NFA* range(NFA* n1, NFA* n2);
 };
 
 

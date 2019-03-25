@@ -21,10 +21,34 @@ NFA::NFA(char c) {
     this->all_states.insert(end);
 }
 
+NFA::NFA(string word) {
+    this->starting = new NFAstate(false);
+    NFAstate* prev = starting;
+    NFAstate* curr;
+    all_states.insert(starting);
+    for (int i = 0; i < word.size() ; ++i) {
+        curr = new NFAstate(false);
+        all_states.insert(curr);
+        stringstream ss;
+        string s;
+        ss << word[i];
+        ss >> s;
+        prev->make_transition(curr,s);
+        prev = curr;
+    }
+    curr->accept = true;
+    accepted.insert(curr);
+    this->ending = curr;
+}
+
+
 
 NFA::NFA(NFAstate *starting, NFAstate *ending) {
     this->starting = starting;
     this->ending = ending;
+    all_states.insert(starting);
+    all_states.insert(ending);
+    accepted.insert(ending);
 }
 
 NFA* NFA::concatinate(NFA *s1, NFA *s2) {
@@ -36,7 +60,6 @@ NFA* NFA::concatinate(NFA *s1, NFA *s2) {
     result->all_states.insert(s1->all_states.begin(),s1->all_states.end());
     result->all_states.insert(s2->all_states.begin(),s2->all_states.end());
     result->accepted.insert(s2->ending);
-
     return result;
 }
 
@@ -87,21 +110,19 @@ NFA* NFA::positive_clouser(NFA *s) {
     return concatinate(s,kleene_clouser(s));
 }
 
-NFA* NFA::range(char c1, char c2) {
+NFA* NFA::range(NFA* n1, NFA*n2) {
     NFAstate* start = new NFAstate(false);
     NFAstate* end = new NFAstate(true);
-    for (char i = c1; i <= c2; ++i) {
+    char c1 = n1->starting->transition[0].first[0];
+    char c2 = n2->starting->transition[0].first[0];
+    for(char c = c1; c <= c2;c++){
         stringstream ss;
         string s;
-        char c = i;
         ss << c;
         ss >> s;
         start->make_transition(end,s);
     }
     NFA* result = new NFA(start,end);
-    result->all_states.insert(start);
-    result->all_states.insert(end);
-    result->accepted.insert(end);
 
     return result;
 }
