@@ -47,8 +47,10 @@ NFA::NFA(NFAstate *starting, NFAstate *ending) {
     this->starting = starting;
     this->ending = ending;
     all_states.insert(starting);
-    all_states.insert(ending);
-    accepted.insert(ending);
+    if (ending != nullptr) {
+        all_states.insert(ending);
+        accepted.insert(ending);
+    }
 }
 
 NFA* NFA::concatinate(NFA *s1, NFA *s2) {
@@ -124,6 +126,18 @@ NFA* NFA::range(NFA* n1, NFA*n2) {
     }
     NFA* result = new NFA(start,end);
 
+    return result;
+}
+
+
+NFA* NFA::compine(vector<NFA *> patterns) {
+    NFAstate* start = new NFAstate(false);
+    NFA* result = new NFA(start, nullptr);
+    for (int i = 0; i < patterns.size() ; ++i) {
+        start->make_transition(patterns[i]->starting,epsilon);
+        result->all_states.insert(patterns[i]->all_states.begin(),patterns[i]->all_states.end());
+        result->accepted.insert(patterns[i]->accepted.begin(),patterns[i]->accepted.end());
+    }
     return result;
 }
 

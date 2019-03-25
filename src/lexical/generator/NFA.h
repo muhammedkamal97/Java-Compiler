@@ -29,6 +29,7 @@ public:
     static NFA* kleene_clouser(NFA* s);
     static NFA* positive_clouser(NFA* s);
     static NFA* range(NFA* n1, NFA* n2);
+    static NFA* compine(vector<NFA*> patterns);
 };
 
 
