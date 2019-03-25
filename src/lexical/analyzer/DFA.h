@@ -7,21 +7,20 @@
 
 #include <map>
 #include <set>
+#include <lexical/MetaData.h>
 
 using namespace std;
 
 class DFA {
 private:
     int **transition_array;
-    pair<int, int> transition_size;
+    MetaData meta_data;
     map<char, int> *input_map;
     set<int> acceptance_states;
-    int initial_state;
     int current_state;
     int last_acceptance_state;
 public:
-    DFA(int **transition_array, pair<int, int> transition_size, map<char, int> *input_map, int initial_state,
-               set<int> acceptance_states);
+    DFA(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states);
 
     void move(char inp);
 
