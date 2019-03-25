@@ -5,10 +5,9 @@
 
 #include "DFA.h"
 
-DFA::DFA(int **transition_array, pair<int, int> transition_size, map<char, int> *input_map, int initial_state,
-         set<int> acceptance_states)
-         : transition_array(transition_array), transition_size(transition_size), input_map(input_map),
-         acceptance_states(acceptance_states), initial_state(initial_state) {
+DFA::DFA(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states)
+        : transition_array(transition_array), meta_data(meta_data), input_map(input_map),
+         acceptance_states(acceptance_states) {
     reset();
 }
 
@@ -22,15 +21,17 @@ void DFA::move(char inp) {
 }
 
 bool DFA::is_error() {
-    if (current_state < 0)
+    if (current_state == meta_data.invalid_state_index)
         return true;
     return false;
 }
 
 void DFA::reset() {
-    current_state = initial_state;
+    current_state = meta_data.init_state_index;
     last_acceptance_state = -1;
 }
+
+
 
 
 
