@@ -19,22 +19,22 @@ private:
     set<int> acceptance_states;
     set<int> new_acceptance_states;
     pair<int, int> DFA_size;
-    set<int> getNonAcceptanceStates(set<int> acceptance_states);
-    vector<set<int>> partitionState(set<int> state);
-    bool belongsTo(int state_1, int state_2);
-    int getPartitionNumber(int state, vector<set<int>> partitions);
-    vector<set<int>> partitioning();
-    void initTransitionArray(int number_of_rows);
-    void fillTransitionArray(vector<set<int>> final_states);
-    bool checkGoingToStates(int state_1, int state_2);
+    set<int> GetNonAcceptanceStates(set<int> acceptance_states);
+    vector<set<int>> ProssesAPartition(set<int> states);
+    bool CanBeMerged(int state_1, int state_2);
+    int GetPartitionNumber(int state, vector<set<int>> partitions);
+    vector<set<int>> Partitioning();
+    void InitTransitionArray(int number_of_rows);
+    void FillTransitionArray(vector<set<int>> final_states);
+    bool GoingToSameStates(int state_1, int state_2);
 
 public:
-    DFAMinimizer(vector<int *> input_transition_array, set<int> acceptance_states, pair<int, int> DFA_size, int FAi_state){
+    DFAMinimizer(vector<int *> input_transition_array, set<int> acceptance_states, pair<int, int> DFA_size){
         this->acceptance_states = acceptance_states;
         this->input_transition_array = input_transition_array;
         this->DFA_size = DFA_size;
     }
-    void minimize();
+    void Minimize();
 
     int **getTransition_array() const {
         return transition_array;
