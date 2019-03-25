@@ -11,6 +11,6 @@ using namespace std;
 
 struct TokenType {
     string name;
-    bool symboleTable;
+    bool has_symbol_table_entry;
 };
 #endif //COMPILER_TOKENTYPE_H

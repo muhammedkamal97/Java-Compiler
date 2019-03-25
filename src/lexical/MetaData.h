@@ -11,10 +11,10 @@ using namespace std;
 
 
 struct MetaData {
-    pair <int, int > DFA_Size;
+    pair <int, int > DFA_size;
     int invalid_state_index;
     int init_state_index;
-    int epselon_index;
+    int epsilon_index;
     int number_of_inputs;
 
 };
