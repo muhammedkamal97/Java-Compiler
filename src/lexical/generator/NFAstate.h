@@ -14,7 +14,8 @@ class NFAstate {
 public:
     int id;
     bool accept;
-    map<string,int> transition;
+    int label;
+    vector<pair<string,NFAstate*>> transition;
     static int count;
 
     NFAstate(bool accept);
