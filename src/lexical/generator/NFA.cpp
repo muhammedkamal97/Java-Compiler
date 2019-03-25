@@ -9,7 +9,11 @@ static string epsilon = "";
 NFA::NFA(char c) {
     NFAstate* start = new NFAstate(false);
     NFAstate* end = new NFAstate(true);
-    start->make_transition(end,string(1,c));
+    stringstream ss;
+    string s;
+    ss << c;
+    ss >> s;
+    start->make_transition(end,s);
     this->starting = start;
     this->ending = end;
     this->accepted.insert(end);
@@ -87,7 +91,12 @@ NFA* NFA::range(char c1, char c2) {
     NFAstate* start = new NFAstate(false);
     NFAstate* end = new NFAstate(true);
     for (char i = c1; i <= c2; ++i) {
-        start->make_transition(end,string(1,i));
+        stringstream ss;
+        string s;
+        char c = i;
+        ss << c;
+        ss >> s;
+        start->make_transition(end,s);
     }
     NFA* result = new NFA(start,end);
     result->all_states.insert(start);
@@ -98,21 +107,33 @@ NFA* NFA::range(char c1, char c2) {
 }
 
 vector<vector<set<int>>> NFA::get_trasition_array() {
-    set<NFAstate*>::iterator it1 = this->all_states.begin();
-    vector<vector<set<int>>> result(this->all_states.size());
-    for (int i = 0; i < result.size() ; ++i) {
-        result[i].resize(260);
+    transition_array.resize(all_states.size());
+    for (int i = 0; i < transition_array.size(); ++i) {
+        transition_array[i].resize(260);
     }
+
+    label_nfa(starting);
+    set<NFAstate*>::iterator it1 = all_states.begin();
     int index = 0;
-    while(it1 != this->all_states.end()){
-        map<string,int>::iterator it2 = (*it1)->transition.begin();
-        while(it2 != (*it1)->transition.end()){
-            int input = it2->first[0];
-            result[index][input].insert(it2->second);
-            it2++;
+    char input;
+    while(it1 != all_states.end()){
+        index = (*it1)->label;
+        for (int i = 0; i < (*it1)->transition.size(); ++i) {
+            input = (*it1)->transition[i].first[0];
+            transition_array[index][input].insert((*it1)->transition[i].second->label);
         }
         it1++;
-        index++;
     }
-    return result;
+    return transition_array;
+}
+
+void NFA::label_nfa(NFAstate* state) {
+    set<NFAstate*>::iterator it = all_states.begin();
+    state_number = 0;
+    while(it != all_states.end()){
+        if((*it)->label == -1) {
+            (*it)->label = state_number++;
+        }
+        it++;
+    }
 }

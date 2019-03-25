@@ -10,11 +10,15 @@
 using namespace std;
 
 class NFA {
+private:
+    int state_number;
+    void label_nfa(NFAstate* state);
 public:
     set<NFAstate*> accepted;
     set<NFAstate*> all_states;
     NFAstate* starting;
     NFAstate* ending;
+    vector<vector<set<int>>> transition_array;
     NFA(NFAstate* starting,NFAstate* ending);
     NFA(char c);
 
