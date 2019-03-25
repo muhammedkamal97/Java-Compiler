@@ -37,6 +37,8 @@ private:
 
     string make_label(set<int> *states);
 
+    void create_new_state(map<int, dfa_state *> *states_by_index, map<string,
+            dfa_state *> *states_by_originator, int index, dfa_state *new_state);
 
 public:
     explicit DFAManufacturer(vector<set<int> *> *nfa_transition_array);
