@@ -11,7 +11,6 @@ void NFAManufacturer::generate_diagram() {}
 
 NFA* NFAManufacturer::evaluate_postfix(vector<string> postfix) {
     //get first definition or character
-
     stack<NFA*> eval;
     stack<char> range;
     NFA* t;
@@ -41,12 +40,12 @@ NFA* NFAManufacturer::evaluate_postfix(vector<string> postfix) {
                     eval.pop();
                     s = eval.top();
                     eval.pop();
-                    eval.push(NFA::concatinate(t,s));
+                    eval.push(NFA::concatinate(s,t));
                     break;
                 case '-':
-                    char c2 = range.top();range.pop();
-                    char c1 = range.top();range.pop();
-                    eval.push(NFA::range(c1,c2));
+                    t = eval.top();eval.pop();
+                    s = eval.top();eval.pop();
+                    eval.push(NFA::range(s,t));
                     break;
             }
         }else{
@@ -54,8 +53,7 @@ NFA* NFAManufacturer::evaluate_postfix(vector<string> postfix) {
             if(is_definition(postfix[i])){
                 eval.push(this->definitions[postfix[i]]);
             }else{
-                eval.push(new NFA(postfix[i][0]));
-                range.push(postfix[i][0]);
+                eval.push(new NFA(postfix[i]));
             }
         }
     }
@@ -147,3 +145,4 @@ bool NFAManufacturer::check_range(int i, vector<string> temp){
            !is_operator(temp[i-1]) && !is_operator(temp[i+1]) &&
            !is_definition(temp[i-1]) && !is_definition(temp[i+1]);
 }
+
