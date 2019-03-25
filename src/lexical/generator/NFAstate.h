@@ -15,6 +15,7 @@ public:
     int id;
     bool accept;
     int label;
+
     string accepted_pattern;
     vector<pair<string,NFAstate*>> transition;
     static int count;
