@@ -27,14 +27,16 @@ NFA::NFA(string word) {
     NFAstate* curr;
     all_states.insert(starting);
     for (int i = 0; i < word.size() ; ++i) {
-        curr = new NFAstate(false);
-        all_states.insert(curr);
-        stringstream ss;
-        string s;
-        ss << word[i];
-        ss >> s;
-        prev->make_transition(curr,s);
-        prev = curr;
+        if(word[i] != '\\') {
+            curr = new NFAstate(false);
+            all_states.insert(curr);
+            stringstream ss;
+            string s;
+            ss << word[i];
+            ss >> s;
+            prev->make_transition(curr, s);
+            prev = curr;
+        }
     }
     curr->accept = true;
     accepted.insert(curr);
@@ -47,15 +49,12 @@ NFA::NFA(NFAstate *starting, NFAstate *ending) {
     this->starting = starting;
     this->ending = ending;
     all_states.insert(starting);
-<<<<<<< HEAD
+
     if (ending != nullptr) {
         all_states.insert(ending);
         accepted.insert(ending);
     }
-=======
-    all_states.insert(ending);
-    accepted.insert(ending);
->>>>>>> 21bcf2bdff31d7fdd73b1bd4034fdb3b4c3d2d25
+
 }
 
 NFA* NFA::concatinate(NFA *s1, NFA *s2) {
