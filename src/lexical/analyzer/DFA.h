@@ -11,20 +11,31 @@
 using namespace std;
 
 class DFA {
+private:
+    int **transition_array;
+    pair<int, int> transition_size;
+    map<char, int> *input_map;
+    set<int> acceptance_states;
+    int initial_state;
+    int current_state;
+    int last_acceptance_state;
 public:
-    DFA(int **transition_array, pair<int, int> transition_size, map<char, int> *input_map,
+    DFA(int **transition_array, pair<int, int> transition_size, map<char, int> *input_map, int initial_state,
                set<int> acceptance_states);
 
     void move(char inp);
 
-    int get_state();
+    int get_current_state() {
+        return current_state;
+    }
 
     bool is_error();
 
-    int last_accepted_state();
+    int get_last_accepted_state() {
+        return last_acceptance_state;
+    }
 
     void reset();
-
 
 };
 
