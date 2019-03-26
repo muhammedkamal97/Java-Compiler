@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <lexical/MetaData.h>
 
 using namespace std;
 struct dfa_state {
@@ -24,6 +25,7 @@ private:
     bool *is_epsilon_cached;
     vector<set<int> *> *nfa;
     int input_number;
+    MetaData *meta_data;
 
     void generate_epsilon_closures();
 
@@ -41,7 +43,7 @@ private:
             dfa_state *> *states_by_originator, int index, dfa_state *new_state);
 
 public:
-    explicit DFAManufacturer(vector<set<int> *> *nfa_transition_array);
+    explicit DFAManufacturer(vector<set<int> *> *nfa_transition_array, MetaData *meta_data);
 
     void generate_dfa();
 

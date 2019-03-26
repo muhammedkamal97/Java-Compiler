@@ -4,10 +4,11 @@
 
 #include "DFAManufacturer.h"
 
-DFAManufacturer::DFAManufacturer(vector<set<int> *> *nfa_transition_array) {
+DFAManufacturer::DFAManufacturer(vector<set<int> *> *nfa_transition_array, MetaData *metaData) {
     transition_array = new vector<int *>();
+    this->meta_data = metaData;
     this->nfa = nfa_transition_array;
-    this->input_number = 3; //TODO replace with variable from struct
+    this->input_number = meta_data->number_of_inputs;
     init_closures_array(nfa_transition_array->size());
 }
 
@@ -42,7 +43,8 @@ DFAManufacturer::generate_dfa() {
 
 
     //initially the unmarked states contain the e-closure of the init state
-    auto init_ep = this->nfa->at(0)[input_number - 1];
+    auto init_ep = this->nfa->at(
+            meta_data->init_state_index)[meta_data->epsilon_index]; //TODO does the init closure contain the state itself ?
     auto init_label = make_label(&init_ep);
     auto init_ep_closure = new set(init_ep);
     init_ep_closure->merge(*epsilon_closure_of(&init_ep));
@@ -54,15 +56,24 @@ DFAManufacturer::generate_dfa() {
         //process each unprocessed inserted state in the array
         auto curr_state = states_by_index.at(index);
 
-        for (int j = 0; j < input_number - 1; j++) {
-            auto new_state = next_state(new set<int>(*curr_state->complete_states), j);
-            auto v = states_by_originator.find(new_state->originator_states);
+        for (int j = 0; j < input_number; j++) {
+            if (j == meta_data->epsilon_index) continue; //we don't want to compute the epsilon transitions
 
+            auto new_state = next_state(new set<int>(*curr_state->complete_states), j);
+
+            if (new_state->originator_states.empty()) {
+                //no transition found, go to invalid state
+                this->transition_array->at(index)[j] = meta_data->invalid_state_index;
+                continue;
+            }
+
+            auto v = states_by_originator.find(new_state->originator_states);
             if (v != states_by_originator.end()) {
                 //this state is already in the table, use its index in the transition array
                 this->transition_array->at(index)[j] = v->second->index;
                 continue;
-            };
+            }
+
 
             //this state could not be found in the current table, thus we insert a new state
             new_state->index = states_size;
@@ -72,6 +83,8 @@ DFAManufacturer::generate_dfa() {
         }
         index++;
     }
+    meta_data->DFA_size.first = states_size;
+    meta_data->DFA_size.second = input_number - 1;
 }
 
 void
@@ -92,7 +105,8 @@ DFAManufacturer::next_state(set<int> *states, int input) {
     while (it != states->end()) {
         auto next_states = this->nfa->at(*it)[input]; //get next states of this input for the current state
         auto epsilon_closure = epsilon_closure_of(&next_states);
-        originator->merge(set<int>(next_states)); // the originator of the new state is the set of all the next states without their e-closure
+        originator->merge(set<int>(
+                next_states)); // the originator of the new state is the set of all the next states without their e-closure
         complete_set->merge(set<int>(next_states));
         complete_set->merge(set<int>(*epsilon_closure));
         it++;
@@ -159,7 +173,7 @@ DFAManufacturer::generate_epsilon_closure(int state) {
     if (is_epsilon_cached[state]) return new set<int>(*epsilon_closures[state]);
     is_epsilon_cached[state] = true;
     set<int> *row = nfa->at(state);
-    auto ep_closure = (row[input_number - 1]);
+    auto ep_closure = (row[meta_data->epsilon_index]);
     auto *result = new set<int>(ep_closure);
 
     // Creating a iterator pointing to start of set
