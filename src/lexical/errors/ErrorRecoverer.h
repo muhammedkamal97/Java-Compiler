@@ -7,7 +7,7 @@
 
 
 #include "../../errors/ErrorLogger.h"
-#include "../analyzer/DFASimulator.h"
+#include "lexical/analyzer/Tokenizer.h"
 
 class ErrorRecoverer {
 private:
