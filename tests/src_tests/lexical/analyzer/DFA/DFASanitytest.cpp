@@ -61,19 +61,6 @@ TEST_F(DFASanityTest, correctTransitionMultipleInput2) {
     ASSERT_EQ(dfa->get_current_state(), 3);
 }
 
-TEST_F(DFASanityTest, correctLastAcceptanceStateSingleInput) {
-    dfa->move('a');
-    ASSERT_EQ(dfa->get_last_accepted_state(), 1);
-}
-
-TEST_F(DFASanityTest, correctLastAcceptanceStateMultipleInput) {
-    char input[2] = {'b', 'a'};
-    for (int i = 0; i < 2; ++i) {
-        dfa->move(input[i]);
-    }
-    ASSERT_EQ(dfa->get_last_accepted_state(), 2);
-}
-
 TEST_F(DFASanityTest, invalidTransitionGiveError) {
     char input[2] = {'b', 'b'};
     for (int i = 0; i < 2; ++i) {

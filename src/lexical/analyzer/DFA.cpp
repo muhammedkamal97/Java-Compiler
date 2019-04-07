@@ -15,9 +15,6 @@ void DFA::move(char inp) {
     if (is_error()) throw "Error";
     int input_int = input_map->at(inp);
     current_state = transition_array[current_state][input_int];
-
-    if (acceptance_states.count(current_state))
-        last_acceptance_state = current_state;
 }
 
 bool DFA::is_error() {
@@ -28,10 +25,10 @@ bool DFA::is_error() {
 
 void DFA::reset() {
     current_state = meta_data.init_state_index;
-    last_acceptance_state = -1;
 }
 
-
-
+bool DFA::is_in_acceptance_state() {
+    return acceptance_states.find(current_state) != acceptance_states.end();
+}
 
 
