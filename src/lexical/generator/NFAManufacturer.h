@@ -17,7 +17,7 @@ using namespace std;
 class NFAManufacturer {
 private:
     map<char, int> *input_map;
-    vector<set<int>[]> *transition_array;
+    vector<set<int>*> *transition_array;
     map<string,NFA*> definitions;
     map<string,NFA*> patterns;
 
@@ -37,7 +37,7 @@ public:
         return input_map;
     }
 
-    vector<set<int>[]> *getTranisition_array() const {
+    vector<set<int>*> *getTranisition_array() const {
         return transition_array;
     }
 
