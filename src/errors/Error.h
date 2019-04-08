@@ -10,9 +10,11 @@
 
 using namespace std;
 struct Error {
+    Error(string reporter_module, string error_msg, map<string, void *>* attr = nullptr);
+
     string reporter_module;
     string error_msg;
-    map<string, void *> attr;
+    map<string, void *>* attr;
 
 };
 

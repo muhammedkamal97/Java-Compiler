@@ -13,8 +13,13 @@ DFA::DFA(int **transition_array, MetaData meta_data, map<char, int> *input_map, 
 
 void DFA::move(char inp) {
     if (is_error()) throw "Error";
-    int input_int = input_map->at(inp);
-    current_state = transition_array[current_state][input_int];
+    if (input_map->find(inp) != input_map->end()) {
+        int input_int = input_map->at(inp);
+        current_state = transition_array[current_state][input_int];
+    }
+    else {
+        current_state = meta_data.invalid_state_index;
+    }
 }
 
 bool DFA::is_error() {

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <tokens/TokenType.h>
 #include <tokens/Token.h>
+#include <errors/ErrorLogger.h>
 #include "DFA.h"
 
 using namespace std;
@@ -31,6 +32,7 @@ private:
     streamoff last_newline_pos;
     int current_line;
     int last_acceptance_state;
+    ErrorLogger* errorLogger;
 
     static const set<char> delimiters;
 
