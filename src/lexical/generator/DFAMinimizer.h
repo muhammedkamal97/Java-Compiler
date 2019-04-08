@@ -26,10 +26,10 @@ private:
     map<int, int> new_tokens_indexes;
     TokenType *new_token_type;
     set<int> GetNonAcceptanceStates(set<int> acceptance_states);
-    vector<set<int>> ProssesAPartition(set<int> states, bool is_acceptance_states);
+    vector<set<int>> splitPartition(set<int> states, bool is_acceptance_states);
     bool CanBeMerged(int state_1, int state_2, bool is_acceptance_states);
     int GetPartitionNumber(int state, vector<set<int>> partitions);
-    vector<set<int>> Partitioning(set<int> states, bool is_acceptance_states);
+    vector<set<int>> GetMinimumStates(set<int> states, bool is_acceptance_states);
     void InitTransitionArray(int number_of_rows);
     void FillTransitionArray(vector<set<int>> final_states);
     bool GoingToSameStates(int state_1, int state_2);

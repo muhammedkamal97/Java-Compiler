@@ -15,6 +15,7 @@ vector<set<int>> all_partitions;
 
 void DFAMinimizer::Minimize(){
     PartitioningAcceptanceStates();
+    PartitioningNonAcceptanceStates();
     InitTransitionArray(final_states.size());
     FillTransitionArray(final_states);
     (map_size).first = final_states.size();
@@ -33,7 +34,7 @@ void DFAMinimizer::FillTransitionArray(vector<set<int>> final_states){
 }
 
 void DFAMinimizer::PartitioningAcceptanceStates(){
-    vector<set<int>> new_accepted_states  = Partitioning(acceptance_states, true);
+    vector<set<int>> new_accepted_states  = GetMinimumStates(acceptance_states, true);
     new_token_type = new TokenType[new_accepted_states.size()];
     for(int i = 0; i < new_accepted_states.size(); i++){
         final_states.push_back(new_accepted_states[i]);
@@ -43,11 +44,18 @@ void DFAMinimizer::PartitioningAcceptanceStates(){
 }
 
 void DFAMinimizer::PartitioningNonAcceptanceStates(){
-    vector<set<int>> new_accepted_states  = Partitioning(GetNonAcceptanceStates(acceptance_states), false);
-    for(int i = 0; i < new_accepted_states.size(); i++){
-        final_states.push_back(new_accepted_states[i]);
+    vector<set<int>> non_acceptance_states  = GetMinimumStates(GetNonAcceptanceStates(acceptance_states), false);
+    for(int i = 0; i < non_acceptance_states.size(); i++){
+        final_states.push_back(non_acceptance_states[i]);
     }
-    //TODO add init state at the first
+    for(int i = 0; i < final_states.size(); i++){
+        if(final_states[i].find(0) != final_states[i].end()){
+            set<int> temp = final_states[i];
+            final_states.erase(final_states.begin()+i);
+            final_states.insert(final_states.begin(),temp);
+            break;
+        }
+    }
 }
 
 
@@ -57,14 +65,14 @@ void DFAMinimizer::InitTransitionArray(int number_of_rows){
         transition_array[i] = new int[DFA_size.second];
 }
 
-vector<set<int>> DFAMinimizer::Partitioning(set<int> states, bool is_acceptance_states){
+vector<set<int>> DFAMinimizer::GetMinimumStates(set<int> states, bool is_acceptance_states){
     vector<set<int>> final_states;
     partitioned_states_stack.push_back(states);
     all_partitions.push_back(states);
 
     while (partitioned_states_stack.size() != 0){
         set<int> current_partition = partitioned_states_stack.back();
-        vector<set<int>> new_partitions = ProssesAPartition(current_partition, is_acceptance_states);
+        vector<set<int>> new_partitions = splitPartition(current_partition, is_acceptance_states);
         partitioned_states_stack.pop_back();
         all_partitions.pop_back();
         if(new_partitions.size() == 1){
@@ -83,7 +91,7 @@ vector<set<int>> DFAMinimizer::Partitioning(set<int> states, bool is_acceptance_
 
 
 
-vector<set<int>> DFAMinimizer::ProssesAPartition(set<int> states, bool is_acceptance_states){
+vector<set<int>> DFAMinimizer::splitPartition(set<int> states, bool is_acceptance_states){
     vector<set<int >> partitioned_state;
     vector<int> not_partitioned_states(states.begin(),states.end());
     vector<TokenType> new_token_type_vector;
