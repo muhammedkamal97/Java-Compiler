@@ -12,9 +12,11 @@
 using namespace std;
 
 struct Token {
-    TokenType type;
+    TokenType* type;
     string lexeme;
     map<string, void *> *attr;
+
+    Token(TokenType *type, const string &lexeme) : type(type), lexeme(lexeme) {}
 };
 
 

@@ -18,22 +18,15 @@ private:
     map<char, int> *input_map;
     set<int> acceptance_states;
     int current_state;
-    int last_acceptance_state;
 public:
     DFA(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states);
 
     void move(char inp);
-
     int get_current_state() {
         return current_state;
     }
-
     bool is_error();
-
-    int get_last_accepted_state() {
-        return last_acceptance_state;
-    }
-
+    bool is_in_acceptance_state();
     void reset();
 
 };

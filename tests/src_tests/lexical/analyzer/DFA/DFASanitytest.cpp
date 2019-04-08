@@ -5,6 +5,10 @@
 #include "gtest/gtest.h"
 #include "DFA.h"
 
+/*
+ * Tests a machine that accepts the following sequences:
+ * 'ab*', 'b' and 'baa+'
+ */
 class DFASanityTest : public ::testing::Test {
 
 protected:
@@ -60,6 +64,7 @@ TEST_F(DFASanityTest, correctTransitionMultipleInput2) {
     }
     ASSERT_EQ(dfa->get_current_state(), 3);
 }
+
 
 TEST_F(DFASanityTest, correctLastAcceptanceStateSingleInput) {
     dfa->move('a');
