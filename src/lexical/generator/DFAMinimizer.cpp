@@ -19,7 +19,8 @@ void DFAMinimizer::Minimize(){
     InitTransitionArray(final_states.size());
     FillTransitionArray(final_states);
     (map_size).first = final_states.size();
-    (map_size).second = DFA_size.second;
+    (map_size).second = data.DFA_size.second;
+    data.DFA_size = map_size;
 }
 
 
@@ -27,7 +28,7 @@ void DFAMinimizer::Minimize(){
 void DFAMinimizer::FillTransitionArray(vector<set<int>> final_states){
     for(int i = 0; i < final_states.size(); i++){
         auto old_state = final_states[i].begin();
-        for (int j = 0; j < DFA_size.second; j++){
+        for (int j = 0; j < data.DFA_size.second; j++){
             transition_array[i][j] = GetPartitionNumber(input_transition_array[*old_state][j], final_states);
         }
     }
@@ -40,6 +41,7 @@ void DFAMinimizer::PartitioningAcceptanceStates(){
         final_states.push_back(new_accepted_states[i]);
         new_tokens_indexes.insert({i+1, i});
         new_token_type[i] = token_type[tokens_indexes.find(*new_accepted_states[i].begin())->second];
+        this->new_acceptance_states.insert(i+1);
     }
 }
 
@@ -53,7 +55,11 @@ void DFAMinimizer::PartitioningNonAcceptanceStates(){
             set<int> temp = final_states[i];
             final_states.erase(final_states.begin()+i);
             final_states.insert(final_states.begin(),temp);
-            break;
+        }
+    }
+    for(int i = 0; i < final_states.size(); i++){
+        if(final_states[i].find(data.invalid_state_index) != final_states[i].end()){
+            data.invalid_state_index = i;
         }
     }
 }
@@ -62,7 +68,7 @@ void DFAMinimizer::PartitioningNonAcceptanceStates(){
 void DFAMinimizer::InitTransitionArray(int number_of_rows){
     transition_array = new int*[number_of_rows];
     for(int i = 0; i < number_of_rows; ++i)
-        transition_array[i] = new int[DFA_size.second];
+        transition_array[i] = new int[data.DFA_size.second];
 }
 
 vector<set<int>> DFAMinimizer::GetMinimumStates(set<int> states, bool is_acceptance_states){
@@ -138,7 +144,7 @@ bool DFAMinimizer::IsCompatible(int state_1, int state_2){
     return false;
 }
 bool DFAMinimizer::GoingToSameStates(int state_1, int state_2){
-    for(int i = 0; i < DFA_size.second; i++){
+    for(int i = 0; i < data.DFA_size.second; i++){
         if(input_transition_array[state_1][i] == input_transition_array[state_2][i]){
             continue;
         }

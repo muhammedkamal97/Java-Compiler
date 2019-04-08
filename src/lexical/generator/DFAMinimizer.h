@@ -20,10 +20,10 @@ private:
     vector<int *> input_transition_array;
     set<int> acceptance_states;
     set<int> new_acceptance_states;
-    pair<int, int> DFA_size;
     map<int, int> tokens_indexes;
     TokenType *token_type;
     map<int, int> new_tokens_indexes;
+    MetaData data;
     TokenType *new_token_type;
     set<int> GetNonAcceptanceStates(set<int> acceptance_states);
     vector<set<int>> splitPartition(set<int> states, bool is_acceptance_states);
@@ -38,12 +38,12 @@ private:
     void PartitioningNonAcceptanceStates();
 
 public:
-    DFAMinimizer(vector<int *> input_transition_array, set<int> acceptance_states, map<int, int> tokens_indexes, TokenType token_type[], MetaData meta_data){
+    DFAMinimizer(vector<int *> input_transition_array, set<int> acceptance_states, map<int, int> tokens_indexes, TokenType *token_type, MetaData meta_data){
         this->acceptance_states = acceptance_states;
         this->input_transition_array = input_transition_array;
-        this->DFA_size = meta_data.DFA_size;
         this->tokens_indexes = tokens_indexes;
         this->token_type = token_type;
+        this->data = meta_data;
     }
     void Minimize();
 
@@ -57,5 +57,18 @@ public:
     set<int> getAcceptanceStates() const{
         return new_acceptance_states;
     }
+
+    MetaData getMeta_data() const {
+        return this->data;
+    }
+
+    map<int, int> getToken_indexes() const {
+        return this->new_tokens_indexes;
+    }
+
+    TokenType * getToken_types() const{
+        return this->new_token_type;
+    }
+
 };
 #endif //TEST_DFAMINIMIZER_H
