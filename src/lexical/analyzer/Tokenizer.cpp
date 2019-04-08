@@ -8,7 +8,7 @@
 const set<char> Tokenizer::delimiters = {' ', '\n', '\t'};
 
 Tokenizer::Tokenizer(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states,
-         map<int, int> acceptance_state_token, TokenType *token_types, fstream *input) : meta_data(meta_data),
+         map<int, int> *acceptance_state_token, TokenType** token_types, fstream *input) : meta_data(meta_data),
          acceptance_state_token(acceptance_state_token), token_types(token_types), input(input) {
     automata = new DFA(transition_array, meta_data, input_map, acceptance_states);
     current_pos = 0;
@@ -35,8 +35,9 @@ Token* Tokenizer::process_following_token() {
     char c;
     streamoff start_pos = current_pos;
     string token_str = "";
-    Token* token = nullptr;
-    while (input->get(c) && delimiters.count(c) && !automata->is_error()) {
+    Token* token;
+
+    while (input->get(c) && !delimiters.count(c) && !automata->is_error()) {
         automata->move(c);
         token_str += c;
         current_pos = input->tellg();
@@ -50,21 +51,23 @@ Token* Tokenizer::process_following_token() {
         current_line++;
         last_newline_pos = input->tellg();
     }
-    if (c == char_traits<char>::eof() && start_pos == current_pos) {
+
+    if (input->peek() == EOF && start_pos == current_pos) {
         return nullptr;
     }
 
     if (automata->is_in_acceptance_state()) {
-        int token_type_index = acceptance_state_token[automata->get_current_state()];
-        TokenType* token_type = &token_types[token_type_index];
+
+        int token_type_index = acceptance_state_token->at(automata->get_current_state());
+        TokenType* token_type = token_types[token_type_index];
         token = new Token(token_type, token_str);
     }
     else if (last_acceptance_state != -1) {     // Passed through an acceptance state at some point
         streamoff rewind_offset = current_pos - last_accepted_pos;
         token_str = token_str.substr(0, token_str.length() - rewind_offset);
 
-        int token_type_index = acceptance_state_token[last_acceptance_state];
-        TokenType* token_type = &token_types[token_type_index];
+        int token_type_index = acceptance_state_token->at(last_acceptance_state);
+        TokenType* token_type = token_types[token_type_index];
         token = new Token(token_type, token_str);
 
         rewind_stream(last_accepted_pos);
@@ -73,6 +76,7 @@ Token* Tokenizer::process_following_token() {
         // Initiate error recovery
     }
 
+    return token;
 }
 
 void Tokenizer::rewind_stream(streamoff offset) {

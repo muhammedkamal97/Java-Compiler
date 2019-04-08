@@ -21,8 +21,8 @@ class Tokenizer {
 private:
     DFA *automata;
     MetaData meta_data;
-    map<int, int> acceptance_state_token;
-    TokenType *token_types;
+    map<int, int>* acceptance_state_token;
+    TokenType** token_types;
     Token* tokens_buffer[2];
     bool next_token_ready;
     fstream *input;
@@ -39,7 +39,7 @@ private:
 public:
 
     Tokenizer(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states,
-            map<int, int> acceptance_state_token, TokenType *token_types, fstream *input);
+            map<int, int> *acceptance_state_token, TokenType** token_types, fstream *input);
 
     Token* next_token();
 

@@ -5,6 +5,10 @@
 #include "gtest/gtest.h"
 #include "DFA.h"
 
+/*
+ * Tests a machine that accepts the following sequences:
+ * 'ab*', 'b' and 'baa+'
+ */
 class DFASanityTest : public ::testing::Test {
 
 protected:
