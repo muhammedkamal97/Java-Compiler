@@ -2,6 +2,7 @@
 // Created by Muhammed on 3/24/2019.
 //
 
+
 #include "NFA.h"
 
 static string epsilon = "";
@@ -27,14 +28,16 @@ NFA::NFA(string word) {
     NFAstate* curr;
     all_states.insert(starting);
     for (int i = 0; i < word.size() ; ++i) {
-        curr = new NFAstate(false);
-        all_states.insert(curr);
-        stringstream ss;
-        string s;
-        ss << word[i];
-        ss >> s;
-        prev->make_transition(curr,s);
-        prev = curr;
+        if(word[i] != '\\') {
+            curr = new NFAstate(false);
+            all_states.insert(curr);
+            stringstream ss;
+            string s;
+            ss << word[i];
+            ss >> s;
+            prev->make_transition(curr, s);
+            prev = curr;
+        }
     }
     curr->accept = true;
     accepted.insert(curr);
@@ -47,8 +50,12 @@ NFA::NFA(NFAstate *starting, NFAstate *ending) {
     this->starting = starting;
     this->ending = ending;
     all_states.insert(starting);
-    all_states.insert(ending);
-    accepted.insert(ending);
+
+    if (ending != nullptr) {
+        all_states.insert(ending);
+        accepted.insert(ending);
+    }
+
 }
 
 NFA* NFA::concatinate(NFA *s1, NFA *s2) {
@@ -127,6 +134,21 @@ NFA* NFA::range(NFA* n1, NFA*n2) {
     return result;
 }
 
+
+
+NFA* NFA::compine(vector<NFA *> patterns) {
+    NFAstate* start = new NFAstate(false);
+    NFA* result = new NFA(start, nullptr);
+    for (int i = 0; i < patterns.size() ; ++i) {
+        start->make_transition(patterns[i]->starting,epsilon);
+        result->all_states.insert(patterns[i]->all_states.begin(),patterns[i]->all_states.end());
+        result->accepted.insert(patterns[i]->accepted.begin(),patterns[i]->accepted.end());
+    }
+    return result;
+}
+
+
+
 vector<vector<set<int>>> NFA::get_trasition_array() {
     transition_array.resize(all_states.size());
     for (int i = 0; i < transition_array.size(); ++i) {
@@ -145,6 +167,16 @@ vector<vector<set<int>>> NFA::get_trasition_array() {
         }
         it1++;
     }
+    MetaData meta = {make_pair(all_states.size(),260),
+                     0,0,0,260};
+    map<int,int> accepted_patterens;
+    it1 = accepted.begin();
+    while(it1!=accepted.end()){
+        //accepted_patterens[(*it1)->label] = index;//TODO index of the tokenType in the array of Token.
+        it1++;
+    }
+
+
     return transition_array;
 }
 
