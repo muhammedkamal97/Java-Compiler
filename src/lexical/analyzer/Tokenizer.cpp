@@ -16,6 +16,7 @@ Tokenizer::Tokenizer(int **transition_array, MetaData meta_data, map<char, int> 
     automata = new DFA(transition_array, meta_data, input_map, acceptance_states);
     current_pos = 0;
     current_line = 0;
+    last_newline_pos = 0;
     last_accepted_pos = 0;
     last_acceptance_state  = -1;
     errorLogger = new ErrorLogger();
@@ -50,7 +51,7 @@ Token* Tokenizer::process_following_token() {
                 last_newline_pos = input->tellg();
             }
         }
-        while (input->get(c) && !delimiters.count(c) && !automata->is_error()) {
+        while (!delimiters.count(input->peek()) && input->get(c) &&  !automata->is_error()) {
             automata->move(c);
             token_str += c;
             current_pos = input->tellg();
@@ -58,11 +59,6 @@ Token* Tokenizer::process_following_token() {
                 last_acceptance_state = automata->get_current_state();
                 last_accepted_pos = input->tellg();
             }
-        }
-
-        if (c == '\n') {
-            current_line++;
-            last_newline_pos = input->tellg();
         }
 
         if (input->peek() == EOF && start_pos == current_pos) {
@@ -85,10 +81,9 @@ Token* Tokenizer::process_following_token() {
             rewind_stream(last_accepted_pos);
         } else {
             panic_mode = true;
-            char x1 = input->peek();
             ErrorRecoverer* errorRecoverer = new ErrorRecoverer(errorLogger, operation_mode::RECOVERY);
-            errorRecoverer->recover(input, start_pos, operation_mode::RECOVERY);
-            char x2 = input->peek();
+            errorRecoverer->recover(input, start_pos, current_line + 1, current_pos - last_newline_pos,
+                    operation_mode::RECOVERY);
             errorRecoverer->report();
         }
     } while(panic_mode);
