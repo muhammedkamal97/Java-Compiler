@@ -37,6 +37,13 @@ Token* Tokenizer::process_following_token() {
     string token_str = "";
     Token* token;
 
+    while (delimiters.count(input->peek())) {
+        input->get(c);
+        if (c == '\n') {
+            current_line++;
+            last_newline_pos = input->tellg();
+        }
+    }
     while (input->get(c) && !delimiters.count(c) && !automata->is_error()) {
         automata->move(c);
         token_str += c;
