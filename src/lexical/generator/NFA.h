@@ -30,8 +30,8 @@ public:
 
     NFA(char c);
 
-    NFA(string word);
-
+    NFA(string *word);
+    NFA *copy();
     vector<vector<set<int>>> get_trasition_array(map<string, pair<int, int>> *tokens_priorities_map);
 
     static NFA *concatinate(NFA *s1, NFA *s2);

@@ -3,12 +3,11 @@
 //
 
 #include "Tokenizer.h"
-#include "Token.h"
-#include "ErrorRecoverer.h"
-#include "ErrorLogger.h"
 #include <iostream>
+#include <lexical/errors/ErrorRecoverer.h>
 
 const set<char> Tokenizer::delimiters = {' ', '\n', '\t'};
+map<int, int>* Tokenizer::static_acceptance_state_token = nullptr;
 
 Tokenizer::Tokenizer(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states,
         map<int, int> *acceptance_state_token, TokenType** token_types, fstream *input) : meta_data(meta_data),
@@ -21,6 +20,7 @@ Tokenizer::Tokenizer(int **transition_array, MetaData meta_data, map<char, int> 
     last_acceptance_state  = -1;
     errorLogger = new ErrorLogger();
     tokens_buffer[0] = process_following_token();
+    Tokenizer::static_acceptance_state_token = new map<int, int>(*acceptance_state_token);
 }
 
 /**
@@ -67,14 +67,14 @@ Token* Tokenizer::process_following_token() {
 
         panic_mode = false;
         if (automata->is_in_acceptance_state()) {
-            int token_type_index = acceptance_state_token->at(automata->get_current_state());
+            int token_type_index = static_acceptance_state_token->at(automata->get_current_state());
             TokenType *token_type = token_types[token_type_index];
             token = new Token(token_type, token_str);
         } else if (last_acceptance_state != -1) {     // Passed through an acceptance state at some point
             streamoff rewind_offset = current_pos - last_accepted_pos;
             token_str = token_str.substr(0, token_str.length() - rewind_offset);
 
-            int token_type_index = acceptance_state_token->at(last_acceptance_state);
+            int token_type_index = static_acceptance_state_token->at(last_acceptance_state);
             TokenType *token_type = token_types[token_type_index];
             token = new Token(token_type, token_str);
 

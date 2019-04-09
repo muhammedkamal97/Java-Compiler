@@ -22,7 +22,19 @@ NFA::NFA(char c) {
     this->all_states.insert(end);
 }
 
-NFA::NFA(string word) {
+NFA::NFA(string *wrd) {
+    auto word = *wrd;
+    if(word == "" || word == "\\L"){
+        NFAstate* start = new NFAstate(false);
+        NFAstate* end = new NFAstate(true);
+        start->make_transition(end,epsilon);
+        this->starting = start;
+        this->ending = end;
+        this->accepted.insert(end);
+        this->all_states.insert(start);
+        this->all_states.insert(end);
+        return;
+    }
     this->starting = new NFAstate(false);
     NFAstate *prev = starting;
     NFAstate *curr;
@@ -31,12 +43,14 @@ NFA::NFA(string word) {
         if (word[i] != '\\') {
             curr = new NFAstate(false);
             all_states.insert(curr);
+            int x = curr->id;
             stringstream ss;
             string s;
             ss << word[i];
             ss >> s;
             prev->make_transition(curr, s);
             prev = curr;
+
         }
     }
     curr->accept = true;
@@ -152,12 +166,18 @@ NFA::compine(vector<NFA *> patterns) {
 }
 
 
+NFA* NFA::copy() {
+
+}
+
+
+
 vector<vector<set<int>>>
 NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_map) {
     transition_array.resize(all_states.size());
     token_indexes = new map<int, pair<int, int>>();
     for (int i = 0; i < transition_array.size(); ++i) {
-        transition_array[i].resize(260);
+        transition_array[i].resize(256);
     }
     accepted_states_indices = new set<int>();
     label_nfa(starting);
@@ -178,8 +198,8 @@ NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_ma
         }
         it1++;
     }
-    metadata = new MetaData{make_pair(all_states.size(), 260),
-                            -1, 0, 0, 260};
+    metadata = new MetaData{make_pair(all_states.size(), 256),
+                            -1, 0, 0, 256};
     map<int, string> accepted_patterns;
     it1 = accepted.begin();
     while (it1 != accepted.end()) {
@@ -190,12 +210,17 @@ NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_ma
     return transition_array;
 }
 
-void
-NFA::label_nfa(NFAstate *state) {
-    set<NFAstate *>::iterator it = all_states.begin();
-    state_number = 0;
-    while (it != all_states.end()) {
-        if ((*it)->label == -1) {
+void NFA::label_nfa(NFAstate* state) {
+    set<NFAstate*>::iterator it = all_states.begin();
+    while(it != all_states.end()){
+        (*it)->label = -1;
+        it++;
+    }
+    it = all_states.begin();
+    state_number = 1;
+    state->label = 0;
+    while(it != all_states.end()){
+        if((*it)->label == -1) {
             (*it)->label = state_number++;
         }
         it++;

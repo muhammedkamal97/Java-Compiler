@@ -4,27 +4,34 @@
 
 #include "NFAManufacturer.h"
 
-NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expressions,
-                                 vector<pair<string, vector<string>>> definations,
-                                 vector<string> key_words,
-                                 vector<string> punctuations) {
+
+
+void NFAManufacturer::NFAManufacturers(vector<pair<string,vector<string>>> expressions,
+        vector<pair<string,vector<string>>> definations,
+        vector<string> key_words,
+        vector<string> punctuations) {
+
+    this->punctuations = punctuations;
+    transition_array = new vector<set<int>*>();
+    definations.resize(definations.size());
+    expressions.resize(expressions.size());
+    NFA* def_nfa;
     auto tokens_priorities_map = new map<string, pair<int, int>>();
     int tokens_priority = 0;
-    NFA *def_nfa;
     for (int i = 0; i < definations.size(); ++i) {
         string def = definations[i].first;
-        vector<string> regex = definations[i].second;
-        def_nfa = evaluate_postfix(regex_to_postfix(regex));
-        this->definitions[def] = def_nfa;
+        vector<string> regex = regex_to_postfix(definations[i].second);
+        this->definitions[def] = regex;
     }
 
     vector<NFA *> nfa_expressions;
     NFA *temp;
-    vector<TokenType *> *tokens_vec = new vector<TokenType *>();
+    tokens_vec = new vector<TokenType *>();
 
 
     for (int i = 0; i < key_words.size(); ++i) {
-        temp = new NFA(key_words[i]);
+        string curr = key_words[i];
+        temp = new NFA(&curr);
         temp->ending->accepted_pattern = key_words[i];
 
         auto token = new TokenType{key_words[i], true}; //TODO keywords in symbol table?
@@ -37,7 +44,8 @@ NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expression
     }
 
     for (int i = 0; i < punctuations.size(); ++i) {
-        temp = new NFA(punctuations[i]);
+        string curr = punctuations[i];
+        temp = new NFA(&curr);
         temp->ending->accepted_pattern = punctuations[i];
 
         auto token = new TokenType{punctuations[i], false};
@@ -49,25 +57,45 @@ NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expression
         nfa_expressions.push_back(temp);
     }
 
+
     for (int i = 0; i < expressions.size(); ++i) {
-        string exp = expressions[i].first;
         vector<string> regex = expressions[i].second;
         temp = evaluate_postfix(regex_to_postfix(regex));
-        temp->ending->accepted_pattern = exp;
+        temp->ending->accepted_pattern = expressions[i].first;
 
-        auto token = new TokenType{exp, exp == "id"};
+        auto token = new TokenType{expressions[i].first, expressions[i].first == "id"}; //TODO keywords in symbol table?
         temp->ending->accepted_token_type = token;
         tokens_vec->emplace_back(token);
-        tokens_priorities_map->insert(make_pair(exp, make_pair(tokens_priority, tokens_priority)));
+        tokens_priorities_map->insert(make_pair(expressions[i].first, make_pair(tokens_priority, tokens_priority)));
         tokens_priority++;
 
         nfa_expressions.push_back(temp);
     }
 
+    nfa = NFA::compine(nfa_expressions);
 
-    NFA *nfa = NFA::compine(nfa_expressions);
+    transition_table = nfa->get_trasition_array(tokens_priorities_map);
 
-    vector<vector<set<int>>> transition_table = nfa->get_trasition_array(tokens_priorities_map);
+    //for (int i = 0; i < transition_table.size(); i++) {
+      //  transition_array->push_back(&transition_table[i][0]);
+    //}
+
+//    for (int i = 0; i < transition_table.size() ; ++i) {
+//        cout<< "state "<< i<<":";
+//        for (int j = 0; j < transition_table[i].size() ; ++j) {
+//            if(!transition_table[i][j].empty()){
+//                printf(" %c ",j);
+//                if(j < 0) printf("error");
+//                cout<<"{ ";
+//                for (auto k : transition_table[i][j]) {
+//                    cout<< k<< " ";
+//                }
+//                cout<<"}";
+//            }
+//        }
+//        cout<<endl;
+//    }
+
 }
 
 void
@@ -79,10 +107,9 @@ NFAManufacturer::generate_diagram() {
 NFA *
 NFAManufacturer::evaluate_postfix(vector<string> postfix) {
     //get first definition or character
-    stack<NFA *> eval;
-    stack<char> range;
-    NFA *t;
-    NFA *s;
+    stack<NFA*> eval;
+    NFA* t;
+    NFA* s;
     for (int i = 0; i < postfix.size(); ++i) {
         if (is_operator(postfix[i])) {
             switch (postfix[i][0]) {
@@ -121,9 +148,9 @@ NFAManufacturer::evaluate_postfix(vector<string> postfix) {
         } else {
             //create NFA for character and definitions
             if (is_definition(postfix[i])) {
-                eval.push(this->definitions[postfix[i]]);
+                eval.push(evaluate_postfix(this->definitions[postfix[i]]));
             } else {
-                eval.push(new NFA(postfix[i]));
+                eval.push(new NFA(&postfix[i]));
             }
         }
     }
@@ -139,6 +166,12 @@ NFAManufacturer::regex_to_postfix(vector<string> expression) {
     temp.push_back(expression[0]);
     for (int j = 1; j < expression.size(); ++j) {
         if (!is_operator(expression[j - 1]) && !is_operator(expression[j])) {
+            temp.push_back("$");
+        }else if(!is_operator(expression[j - 1]) && expression[j] == "("){
+            temp.push_back("$");
+        }else if(expression[j-1] ==")" && !is_operator(expression[j])){
+            temp.push_back("$");
+        }else if(unary_operator(expression[j - 1])&&!is_operator(expression[j])){
             temp.push_back("$");
         }
         temp.push_back(expression[j]);
@@ -199,6 +232,10 @@ NFAManufacturer::is_operator(string str) {
            str == "|" ||
            str == "(" || str == ")" ||
            str == "-" || str == "$"; // "$" indication for concatenation
+}
+
+bool NFAManufacturer::unary_operator(string op) {
+    return op == "+" || op == "*";
 }
 
 

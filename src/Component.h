@@ -15,17 +15,27 @@ using namespace std;
 class Component : public ComponentSlave {
 protected:
     Component *master;
-    vector<Component *> slaves;
+    vector<ComponentSlave *> writes_slaves;
+    Component *work_slave;
 
-    bool has_slave(ComponentSlave *slave);
+    bool
+    has_write_slave(ComponentSlave *slave) {
+        auto it = this->writes_slaves.begin();
+        while (it != this->writes_slaves.end()) {
+            if (slave == *it) return slave;
+            it++;
+        }
+        return false;
+    }
 
 public:
 
     /* attach a new slave buffer to this component to write ouput to*/
     void
     attach_to_slave_port(ComponentSlave *slave) {
-        if (has_slave(slave)) return;
-        this->slaves.emplace_back(slave);
+        if (has_write_slave(slave)) return;
+//        this->writes_slaves.push_back(slave);
+        this->write_slave = slave;
     }
 
     /* accept a new master to control the processing of input. Only one master can be accepted.
@@ -34,34 +44,41 @@ public:
     void
     attach_to_master_channel(Component *master) {
         if (this->master != nullptr) return;
+        if (this->master == nullptr) {
+            this->master = this;
+            this->master->handshake_slave_channel(this);
+            return;
+        }
+
         this->master = master;
         this->master->handshake_slave_channel(this);
     }
 
     /*handshake the slave after being accepted as master*/
-
     void
-    handshake_slave_channel(ComponentSlave *slave) {
-        this->attach_to_slave_port(slave);
+    handshake_slave_channel(Component *slave) {
+        this->work_slave = slave;
     }
 
+    void start_work_slaves() {
+        while (true) {
+            void *result = work_slave->process_next_input();
+            if (result == nullptr) break;
+
+            for (int i = 0; i < writes_slaves.size(); i++) {
+                writes_slaves[i]->notify(result);
+            }
+            write_slave->notify(result);
+        }
+    }
 
     virtual void *process_next_input() = 0;
 
 
-    Component(std::fstream *config, std::fstream *input);
+    Component(std::fstream *config, std::fstream *input){};
 
+    ComponentSlave *write_slave;
 };
-
-bool
-Component::has_slave(ComponentSlave *slave) {
-    auto it = this->slaves.begin();
-    while (it != this->slaves.end()) {
-        if (slave == *it) return slave;
-        it++;
-    }
-    return false;
-}
 
 
 #endif //PROJECT_COMPONENT_H

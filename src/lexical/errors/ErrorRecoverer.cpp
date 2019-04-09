@@ -3,7 +3,6 @@
 //
 
 #include "ErrorRecoverer.h"
-#include "Error.h"
 #include <fstream>
 
 ErrorRecoverer::ErrorRecoverer(ErrorLogger *reporter, operation_mode mode) : reporter(reporter), mode(mode) {}

@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include "DFAMinimizer.h"
+#include "TokenType.h"
 
 
 using namespace std;
@@ -36,7 +37,7 @@ void DFAMinimizer::FillTransitionArray(vector<set<int>> final_states){
 
 void DFAMinimizer::PartitioningAcceptanceStates(){
     vector<set<int>> new_accepted_states  = GetMinimumStates(acceptance_states, true);
-    new_token_type = new TokenType[new_accepted_states.size()];
+    new_token_type = new TokenType*[new_accepted_states.size()];
     for(int i = 0; i < new_accepted_states.size(); i++){
         final_states.push_back(new_accepted_states[i]);
         new_tokens_indexes.insert({i+1, i});
@@ -55,13 +56,14 @@ void DFAMinimizer::PartitioningNonAcceptanceStates(){
             set<int> temp = final_states[i];
             final_states.erase(final_states.begin()+i);
             final_states.insert(final_states.begin(),temp);
+            break;
         }
     }
-    for(int i = 0; i < final_states.size(); i++){
+    /*for(int i = 0; i < final_states.size(); i++){
         if(final_states[i].find(data.invalid_state_index) != final_states[i].end()){
             data.invalid_state_index = i;
         }
-    }
+    }*/
 }
 
 
@@ -136,8 +138,8 @@ bool DFAMinimizer::CanBeMerged(int state_1, int state_2, bool is_acceptance_stat
 
 
 bool DFAMinimizer::IsCompatible(int state_1, int state_2){
-    string token_type_1 = token_type[tokens_indexes.find(state_1)->second].name;
-    string token_type_2 = token_type[tokens_indexes.find(state_2)->second].name;
+    string token_type_1 = token_type[tokens_indexes.find(state_1)->second]->name;
+    string token_type_2 = token_type[tokens_indexes.find(state_2)->second]->name;
     if(token_type_1.compare(token_type_2)  == 0){
         return true;
     }
@@ -145,17 +147,24 @@ bool DFAMinimizer::IsCompatible(int state_1, int state_2){
 }
 bool DFAMinimizer::GoingToSameStates(int state_1, int state_2){
     for(int i = 0; i < data.DFA_size.second; i++){
+        int x = input_transition_array[state_1][i];
+        int y = input_transition_array[state_2][i];
         if(input_transition_array[state_1][i] == input_transition_array[state_2][i]){
             continue;
-        }
-        if(GetPartitionNumber(input_transition_array[state_1][i], all_partitions) !=
-                GetPartitionNumber(input_transition_array[state_2][i], all_partitions)){
+        }else{
             return false;
         }
+        /*if(GetPartitionNumber(input_transition_array[state_1][i], all_partitions) !=
+                GetPartitionNumber(input_transition_array[state_2][i], all_partitions)){
+            return false;
+        }*/
     }
     return true;
 }
 int DFAMinimizer::GetPartitionNumber(int state, vector<set<int>> partitions){
+    if(state == -1){
+        return -1;
+    }
     for(int i = 0; i < partitions.size(); i++){
         if(partitions[i].find(state) != partitions[i].end()){
             return i;

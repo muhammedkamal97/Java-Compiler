@@ -13,6 +13,9 @@ NFAstate::NFAstate(bool accept) {
 }
 
 void NFAstate::make_transition(NFAstate *s,string input) {
-    this->transition.push_back(make_pair(input,s));
+    if (!input.empty())
+        this->transition.push_back(make_pair(input,s));
+    else
+        this->transition.push_back(make_pair("",s));
 }
 

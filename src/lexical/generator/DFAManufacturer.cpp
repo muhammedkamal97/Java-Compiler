@@ -59,22 +59,27 @@ DFAManufacturer::generate_dfa() {
     while (index < states_size) {
         //process each unprocessed inserted state in the array
         auto curr_state = states_by_index.at(index);
+        int inp_index = -1;
 
         for (int j = 0; j < input_number; j++) {
-            if (j == meta_data->epsilon_index) continue; //we don't want to compute the epsilon transitions
+            inp_index++;
+            if (j == meta_data->epsilon_index) {
+                inp_index--;
+                continue; //we don't want to compute the epsilon transitions
+            }
 
             auto new_state = next_state(new set<int>(*curr_state->complete_states), j);
 
             if (new_state->originator_states.empty()) {
                 //no transition found, go to invalid state
-                this->transition_array->at(index)[j] = meta_data->invalid_state_index;
+                this->transition_array->at(index)[inp_index] = meta_data->invalid_state_index;
                 continue;
             }
 
             auto v = states_by_originator.find(new_state->originator_states);
             if (v != states_by_originator.end()) {
                 //this state is already in the table, use its index in the transition array
-                this->transition_array->at(index)[j] = v->second->index;
+                this->transition_array->at(index)[inp_index] = v->second->index;
                 continue;
             }
 
@@ -82,8 +87,9 @@ DFAManufacturer::generate_dfa() {
             //this state could not be found in the current table, thus we insert a new state
             new_state->index = states_size;
             create_new_state(&states_by_index, &states_by_originator, states_size, new_state);
-            this->transition_array->at(index)[j] = states_size;
+            this->transition_array->at(index)[inp_index] = states_size;
             states_size++;
+
         }
         index++;
     }
@@ -103,7 +109,7 @@ DFAManufacturer::create_new_state(map<int, dfa_state *> *states_by_index,
     auto it = new_state->complete_states->begin();
     int accepted_index = -1;
     int accepted_priority = -1;
-    while (it != new_state->complete_states->end()) {
+    for (;it != new_state->complete_states->end(); it++) {
         auto tkn = tokens_indexs->find(*it);
         if (tkn == tokens_indexs->end()) continue;
         auto tkn_info = tokens_indexs->at(*it);
@@ -113,7 +119,7 @@ DFAManufacturer::create_new_state(map<int, dfa_state *> *states_by_index,
 
     }
     if(accepted_index != -1){
-        this->new_tokens_indexes->insert(index, accepted_index);
+        this->new_tokens_indexes->insert(make_pair(index, accepted_index));
         this->accepted_states->insert(index);
     }
 }
@@ -152,9 +158,9 @@ DFAManufacturer::make_label(set<int> *states) {
     string label;
     while (it != states->end()) {
         label += to_string(*it);
+        label += '.';
         it++;
     }
-    label += '.';
     return label;
 }
 
