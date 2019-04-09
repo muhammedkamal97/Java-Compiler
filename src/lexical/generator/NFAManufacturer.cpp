@@ -4,6 +4,10 @@
 
 #include "NFAManufacturer.h"
 
+NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions,
+        vector<pair<string,vector<string>>> definations,
+        vector<string> key_words,
+        vector<string> punctuations) {
 NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expressions,
                                  vector<pair<string, vector<string>>> definations,
                                  vector<string> key_words,
@@ -22,6 +26,15 @@ NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expression
     NFA *temp;
     tokens_vec = new vector<TokenType *>();
 
+    vector<NFA*> nfa_expressions;
+    NFA* temp;
+    for (int i = 0; i < expressions.size(); ++i) {
+        string exp = expressions[i].first;
+        vector<string> regex = expressions[i].second;
+        temp = evaluate_postfix(regex_to_postfix(regex));
+        temp->ending->accepted_pattern = exp;
+        nfa_expressions.push_back(temp);
+    }
 
     for (int i = 0; i < key_words.size(); ++i) {
         temp = new NFA(key_words[i]);

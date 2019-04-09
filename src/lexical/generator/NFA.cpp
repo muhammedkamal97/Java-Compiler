@@ -182,10 +182,11 @@ NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_ma
                             -1, 0, 0, 256};
     map<int, string> accepted_patterns;
     it1 = accepted.begin();
-    while (it1 != accepted.end()) {
+    while(it1!=accepted.end()){
         accepted_patterns[(*it1)->label] = (*it1)->accepted_pattern;
         it1++;
     }
+    //TODO set accepted patterns to meta DATA
 
     return transition_array;
 }
