@@ -4,11 +4,15 @@
 
 #include "DFAManufacturer.h"
 
-DFAManufacturer::DFAManufacturer(vector<set<int> *> *nfa_transition_array, MetaData *metaData) {
+DFAManufacturer::DFAManufacturer(vector<set<int> *> *nfa_transition_array, map<int, pair<int, int>> *tokens_indexes,
+                                 MetaData *metaData) {
     transition_array = new vector<int *>();
     this->meta_data = metaData;
     this->nfa = nfa_transition_array;
+    this->tokens_indexs = tokens_indexes;
     this->input_number = meta_data->number_of_inputs;
+    this->new_tokens_indexes = new map<int, int>();
+    this->accepted_states = new set<int>();
     init_closures_array(nfa_transition_array->size());
 }
 
@@ -94,6 +98,24 @@ DFAManufacturer::create_new_state(map<int, dfa_state *> *states_by_index,
     this->transition_array->emplace_back(new int[input_number - 1]);
     states_by_index->insert(pair<int, dfa_state *>(index, new_state));
     states_by_originator->insert(pair<string, dfa_state *>(new_state->originator_states, new_state));
+
+    //insert accepted states
+    auto it = new_state->complete_states->begin();
+    int accepted_index = -1;
+    int accepted_priority = -1;
+    while (it != new_state->complete_states->end()) {
+        auto tkn = tokens_indexs->find(*it);
+        if (tkn == tokens_indexs->end()) continue;
+        auto tkn_info = tokens_indexs->at(*it);
+        if (accepted_priority != -1 && accepted_priority < tkn_info.second) continue; // token has lower priority
+        accepted_priority = tkn_info.second;
+        accepted_index = tkn_info.first;
+
+    }
+    if(accepted_index != -1){
+        this->new_tokens_indexes->insert(index, accepted_index);
+        this->accepted_states->insert(index);
+    }
 }
 
 dfa_state *
@@ -185,6 +207,21 @@ DFAManufacturer::generate_epsilon_closure(int state) {
     }
     epsilon_closures[state] = new set<int>(*result);
     return result;
+}
+
+map<int, int> *
+DFAManufacturer::getTokens_indexes() const {
+    return new_tokens_indexes;
+}
+
+set<int> *
+DFAManufacturer::getAccepted_states() const {
+    return accepted_states;
+}
+
+MetaData *
+DFAManufacturer::getMeta_data() const {
+    return meta_data;
 }
 
 

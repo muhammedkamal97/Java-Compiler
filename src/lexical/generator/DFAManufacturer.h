@@ -26,6 +26,12 @@ private:
     vector<set<int> *> *nfa;
     int input_number;
     MetaData *meta_data;
+    map<int, pair<int,int>> *tokens_indexs;
+    map<int,int> *new_tokens_indexes;
+    set<int>* accepted_states;
+
+private:
+
 
     void generate_epsilon_closures();
 
@@ -43,7 +49,8 @@ private:
             dfa_state *> *states_by_originator, int index, dfa_state *new_state);
 
 public:
-    explicit DFAManufacturer(vector<set<int> *> *nfa_transition_array, MetaData *meta_data);
+    explicit DFAManufacturer(vector<set<int> *> *nfa_transition_array, map<int, pair<int,int>> *tokens_indexes,
+                             MetaData *meta_data);
 
     void generate_dfa();
 
@@ -53,7 +60,11 @@ public:
 
     set<int> **getEpsilon_closures() const;
 
+    map<int, int> *getTokens_indexes() const;
 
+    set<int> *getAccepted_states() const;
+
+    MetaData *getMeta_data() const;
 };
 
 
