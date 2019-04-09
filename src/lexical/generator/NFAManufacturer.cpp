@@ -11,6 +11,8 @@ NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions
     definations.resize(definations.size());
     expressions.resize(expressions.size());
     NFA* def_nfa;
+    auto tokens_priorities_map = new map<string, pair<int, int>>();
+    int tokens_priority = 0;
     for (int i = 0; i < definations.size(); ++i) {
         string def = definations[i].first;
         vector<string> regex = definations[i].second;
