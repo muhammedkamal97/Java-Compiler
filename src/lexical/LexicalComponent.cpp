@@ -34,11 +34,13 @@ void
 LexicalComponent::build_component() {
     auto interpreter = new LexicalConfigInterpreter(config);
     interpreter->generate_rules_map();
-    auto rules = interpreter->get_rules();
+    auto rules = interpreter->get_regexes();
 
     //TODO get rules to NFA module
 
     auto nfa = new NFAManufacturer(*rules);
-    auto dfa = new DFAManufacturer(nfa->getTranisition_array());
+    auto dfa = new DFAManufacturer(nfa->getTranisition_array(), nullptr, nullptr);
+    auto minimizer = new DFAMinimizer(dfa->getTransition_array(), dfa->getAccepted_states(), dfa->getTokens_indexes(),
+                                      nullptr, dfa->getMeta_data());
 
 }
