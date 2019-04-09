@@ -23,6 +23,7 @@ private:
 
     bool is_definition(string def);
     bool is_operator(string str);
+    bool unary_operator(string op);
     int operator_priority(char c);
     bool check_range(int i, vector<string> temp);
 

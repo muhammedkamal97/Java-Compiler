@@ -152,10 +152,11 @@ NFAManufacturer::regex_to_postfix(vector<string> expression) {
     for (int j = 1; j < expression.size(); ++j) {
         if (!is_operator(expression[j - 1]) && !is_operator(expression[j])) {
             temp.push_back("$");
-        }
-        else if(!is_operator(expression[j - 1]) && expression[j] == "("){
+        }else if(!is_operator(expression[j - 1]) && expression[j] == "("){
             temp.push_back("$");
         }else if(expression[j-1] ==")" && !is_operator(expression[j])){
+            temp.push_back("$");
+        }else if(unary_operator(expression[j - 1])&&!is_operator(expression[j])){
             temp.push_back("$");
         }
         temp.push_back(expression[j]);
@@ -216,6 +217,10 @@ NFAManufacturer::is_operator(string str) {
            str == "|" ||
            str == "(" || str == ")" ||
            str == "-" || str == "$"; // "$" indication for concatenation
+}
+
+bool NFAManufacturer::unary_operator(string op) {
+    return op == "+" || op == "*";
 }
 
 
