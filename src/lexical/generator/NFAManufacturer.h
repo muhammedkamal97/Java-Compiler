@@ -27,7 +27,10 @@ private:
     bool check_range(int i, vector<string> temp);
 
 public:
-    NFAManufacturer(map<string, vector<string>> rules);
+    NFAManufacturer(vector<pair<string,vector<string>>> expressions,
+            vector<pair<string,vector<string>>> definations,
+                    vector<string> key_words,
+                    vector<string> punctuations);
 
     void generate_diagram();
 

@@ -169,13 +169,13 @@ vector<vector<set<int>>> NFA::get_trasition_array() {
     }
     MetaData meta = {make_pair(all_states.size(),260),
                      0,0,0,260};
-    map<int,int> accepted_patterens;
+    map<int,string> accepted_patterns;
     it1 = accepted.begin();
     while(it1!=accepted.end()){
-        //accepted_patterens[(*it1)->label] = index;//TODO index of the tokenType in the array of Token.
+        accepted_patterns[(*it1)->label] = (*it1)->accepted_pattern;
         it1++;
     }
-
+    //TODO set accepted patterns to meta DATA
 
     return transition_array;
 }

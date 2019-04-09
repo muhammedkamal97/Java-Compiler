@@ -4,9 +4,49 @@
 
 #include "NFAManufacturer.h"
 
-NFAManufacturer::NFAManufacturer(map<string, vector<string>> rules) {}
+NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions,
+        vector<pair<string,vector<string>>> definations,
+        vector<string> key_words,
+        vector<string> punctuations) {
 
-void NFAManufacturer::generate_diagram() {}
+    NFA* def_nfa;
+    for (int i = 0; i < definations.size(); ++i) {
+        string def = definations[i].first;
+        vector<string> regex = definations[i].second;
+        def_nfa = evaluate_postfix(regex_to_postfix(regex));
+        this->definitions[def] = def_nfa;
+    }
+
+    vector<NFA*> nfa_expressions;
+    NFA* temp;
+    for (int i = 0; i < expressions.size(); ++i) {
+        string exp = expressions[i].first;
+        vector<string> regex = expressions[i].second;
+        temp = evaluate_postfix(regex_to_postfix(regex));
+        temp->ending->accepted_pattern = exp;
+        nfa_expressions.push_back(temp);
+    }
+
+    for (int i = 0; i < key_words.size() ; ++i) {
+        temp = new NFA(key_words[i]);
+        temp->ending->accepted_pattern = key_words[i];
+        nfa_expressions.push_back(temp);
+    }
+
+    for (int i = 0; i < punctuations.size() ; ++i) {
+        temp = new NFA(punctuations[i]);
+        temp->ending->accepted_pattern = punctuations[i];
+        nfa_expressions.push_back(temp);
+    }
+
+    NFA* nfa = NFA::compine(nfa_expressions);
+
+    vector<vector<set<int>>> transition_table = nfa->get_trasition_array();
+}
+
+void NFAManufacturer::generate_diagram() {
+
+}
 
 
 NFA* NFAManufacturer::evaluate_postfix(vector<string> postfix) {
