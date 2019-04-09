@@ -16,8 +16,17 @@ class Component : public ComponentSlave {
 protected:
     Component *master;
     vector<ComponentSlave *> writes_slaves;
-    Component * work_slave;
-    bool has_write_slave(ComponentSlave *slave);
+    Component *work_slave;
+
+    bool
+    has_write_slave(ComponentSlave *slave) {
+        auto it = this->writes_slaves.begin();
+        while (it != this->writes_slaves.end()) {
+            if (slave == *it) return slave;
+            it++;
+        }
+        return false;
+    }
 
 public:
 
@@ -46,35 +55,26 @@ public:
     /*handshake the slave after being accepted as master*/
     void
     handshake_slave_channel(Component *slave) {
-        this->work_slave=slave;
+        this->work_slave = slave;
     }
 
-    void start_work_slaves(){
-       while(true){
-           void* result = work_slave->process_next_input();
-           if(result == nullptr) break;
+    void start_work_slaves() {
+        while (true) {
+            void *result = work_slave->process_next_input();
+            if (result == nullptr) break;
 
-           for(int i = 0;i<writes_slaves.size();i++){
-               writes_slaves[i]->notify(result);
-           }
-       }
+            for (int i = 0; i < writes_slaves.size(); i++) {
+                writes_slaves[i]->notify(result);
+            }
+        }
     }
 
     virtual void *process_next_input() = 0;
 
-    Component(std::fstream *config, std::fstream *input);
+
+    Component(std::fstream *config, std::fstream *input){};
 
 };
-
-bool
-Component::has_write_slave(ComponentSlave *slave) {
-    auto it = this->writes_slaves.begin();
-    while (it != this->writes_slaves.end()) {
-        if (slave == *it) return slave;
-        it++;
-    }
-    return false;
-}
 
 
 #endif //PROJECT_COMPONENT_H

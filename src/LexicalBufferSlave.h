@@ -9,7 +9,6 @@
 #include "ComponentSlave.h"
 #include <fstream>
 
-using namespace std;
 class LexicalBufferSlave : public ComponentSlave{
 private:
     fstream* write_buffer;

@@ -10,7 +10,8 @@
 #include "LexicalComponent.h"
 #include "LexicalConfigInterpreter.h"
 
-LexicalComponent::LexicalComponent(std::fstream *config, std::fstream *input,SimpleSymbolTable* table) : Component(config, input) {
+LexicalComponent::LexicalComponent(std::fstream *config, std::fstream *input, SimpleSymbolTable *table) : Component(
+        config, input) {
     this->table = table;
     this->config = config;
     this->input = input;
@@ -20,9 +21,9 @@ LexicalComponent::LexicalComponent(std::fstream *config, std::fstream *input,Sim
 
 void *
 LexicalComponent::process_next_input() {
-    if(dfa->has_next_token()){
-        Token* tkn = (Token*) dfa->next_token();
-        if(tkn->type->has_symbol_table_entry){
+    if (dfa->has_next_token()) {
+        Token *tkn = (Token *) dfa->next_token();
+        if (tkn->type->has_symbol_table_entry) {
             table->table->insert(make_pair(tkn->lexeme, nullptr));
         }
         return tkn;
@@ -36,7 +37,7 @@ LexicalComponent::get_write_stream() {
 }
 
 void
-LexicalComponent::notify(void * notification) {
+LexicalComponent::notify(void *notification) {
 
 }
 
@@ -60,7 +61,6 @@ LexicalComponent::build_component() {
     dfa_manufacturer->generate_dfa();
 
 
-
     auto minimizer = new DFAMinimizer(*dfa_manufacturer->getTransition_array(),
                                       *dfa_manufacturer->getAccepted_states(),
                                       *dfa_manufacturer->getTokens_indexes(),
@@ -68,12 +68,12 @@ LexicalComponent::build_component() {
                                       *dfa_manufacturer->getMeta_data());
 
     minimizer->Minimize();
-    std::map<int, int> acceptance_state_token= (minimizer->getToken_indexes());
-    map<char,int> input_map;
-    for(int i=0;i < 256;i++ ) input_map[i] = i;
+    std::map<int, int> acceptance_state_token = (minimizer->getToken_indexes());
+    map<char, int> input_map;
+    for (int i = 0; i < 256; i++) input_map[i] = i;
     dfa = new Tokenizer(minimizer->getTransition_array(), minimizer->getMeta_data(), &input_map,
-                             minimizer->getAcceptanceStates(), &acceptance_state_token,
-                             minimizer->getToken_types(), input);
+                        minimizer->getAcceptanceStates(), &acceptance_state_token,
+                        minimizer->getToken_types(), input);
 
 
 }

@@ -5,16 +5,21 @@
 #include <tokens/Token.h>
 #include "LexicalBufferSlave.h"
 
+using namespace std;
+
 std::fstream *
 LexicalBufferSlave::get_write_stream() {
-    return nullptr;
+    return write_buffer;
 }
 
 void
 LexicalBufferSlave::notify(void *notification) {
     Token *token = (Token *) notification;
-//    write_buffer->write(token->lexeme.c_str());
-//TODO
+    if (write_buffer->is_open()) {
+        string lex = token->lexeme;
+        *write_buffer << lex;
+    }
+    write_buffer->close();
 }
 
 LexicalBufferSlave::LexicalBufferSlave(fstream *write_buffer) : write_buffer(write_buffer) {}

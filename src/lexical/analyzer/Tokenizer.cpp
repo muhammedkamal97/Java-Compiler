@@ -3,10 +3,8 @@
 //
 
 #include "Tokenizer.h"
-#include "Token.h"
-#include "ErrorRecoverer.h"
-#include "ErrorLogger.h"
 #include <iostream>
+#include <lexical/errors/ErrorRecoverer.h>
 
 const set<char> Tokenizer::delimiters = {' ', '\n', '\t'};
 
