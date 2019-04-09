@@ -6,6 +6,7 @@
 #define COMPILER_NFASTATE_H
 
 #include <bits/stdc++.h>
+#include <tokens/TokenType.h>
 
 
 using namespace std;
@@ -17,6 +18,7 @@ public:
     int label;
 
     string accepted_pattern;
+    TokenType *accepted_token_type;
     vector<pair<string,NFAstate*>> transition;
     static int count;
 
