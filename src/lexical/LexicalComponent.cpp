@@ -10,7 +10,8 @@
 #include "LexicalComponent.h"
 #include "LexicalConfigInterpreter.h"
 
-LexicalComponent::LexicalComponent(std::fstream *config, std::fstream *input) : Component(config, input) {
+LexicalComponent::LexicalComponent(std::fstream *config, std::fstream *input,SimpleSymbolTable* table) : Component(config, input) {
+    this->table = table;
     this->config = config;
     this->input = input;
     build_component();
@@ -20,7 +21,11 @@ LexicalComponent::LexicalComponent(std::fstream *config, std::fstream *input) : 
 void *
 LexicalComponent::process_next_input() {
     if(dfa->has_next_token()){
-        return dfa->next_token();
+        Token* tkn = (Token*) dfa->next_token();
+        if(tkn->type->has_symbol_table_entry){
+            table->table->insert(make_pair(tkn->lexeme, nullptr));
+        }
+        return tkn;
     }
     return nullptr;
 }

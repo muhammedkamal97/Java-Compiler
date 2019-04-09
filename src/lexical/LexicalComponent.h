@@ -9,6 +9,7 @@
 #include <Component.h>
 #include <fstream>
 #include <lexical/analyzer/Tokenizer.h>
+#include <tables/SimpleSymbolTable.h>
 
 using namespace std;
 
@@ -19,7 +20,7 @@ private:
     fstream* out_stream;
 
 public:
-    LexicalComponent(std::fstream *config, std::fstream *input);
+    LexicalComponent(std::fstream *config, std::fstream *input,SimpleSymbolTable *table);
 
     void *process_next_input() override;
 
@@ -34,6 +35,7 @@ private:
     build_component();
 
     Tokenizer *dfa;
+    SimpleSymbolTable *table;
 };
 
 
