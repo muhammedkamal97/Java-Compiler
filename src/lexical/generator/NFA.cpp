@@ -178,8 +178,8 @@ NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_ma
         }
         it1++;
     }
-    metadata = new MetaData{make_pair(all_states.size(), 260),
-                            -1, 0, 0, 260};
+    metadata = new MetaData{make_pair(all_states.size(), 256),
+                            -1, 0, 0, 256};
     map<int, string> accepted_patterns;
     it1 = accepted.begin();
     while (it1 != accepted.end()) {

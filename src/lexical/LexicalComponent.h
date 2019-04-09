@@ -8,10 +8,11 @@
 
 #include <Component.h>
 #include <fstream>
+#include <lexical/analyzer/Tokenizer.h>
 
 using namespace std;
 
-class LexicalComponent : Component{
+class LexicalComponent : public Component{
 private:
     fstream *input;
     fstream *config;
@@ -24,13 +25,15 @@ public:
 
     fstream *get_write_stream() override;
 
-    void notify() override;
+    void notify(void* notification) override;
 
 private:
 
 
     void
     build_component();
+
+    Tokenizer *dfa;
 };
 
 

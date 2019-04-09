@@ -8,9 +8,10 @@
 #include <fstream>
 
 class ComponentSlave {
+public:
     virtual std::fstream *get_write_stream() = 0;
 
-    virtual void notify() = 0;
+    virtual void notify(void* notification) = 0;
 };
 
 

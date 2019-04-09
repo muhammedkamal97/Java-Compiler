@@ -20,7 +20,7 @@ NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expression
 
     vector<NFA *> nfa_expressions;
     NFA *temp;
-    vector<TokenType *> *tokens_vec = new vector<TokenType *>();
+    tokens_vec = new vector<TokenType *>();
 
 
     for (int i = 0; i < key_words.size(); ++i) {
@@ -65,9 +65,12 @@ NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expression
     }
 
 
-    NFA *nfa = NFA::compine(nfa_expressions);
+    nfa = NFA::compine(nfa_expressions);
 
     vector<vector<set<int>>> transition_table = nfa->get_trasition_array(tokens_priorities_map);
+    for (int i = 0; i < transition_table.size(); i++) {
+        transition_array->emplace_back(&transition_table[i][0]);
+    }
 }
 
 void

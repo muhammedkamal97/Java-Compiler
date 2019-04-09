@@ -29,7 +29,7 @@ protected:
 
     void SetUp() override {
         create_data();
-        manu = new DFAManufacturer(this->nfa, new MetaData{pair<int,int>() ,-1,0,2,3});
+//        manu = new DFAManufacturer(this->nfa, new MetaData{pair<int,int>() ,-1,0,2,3});
     }
 
     DFAManufacturer *manu;

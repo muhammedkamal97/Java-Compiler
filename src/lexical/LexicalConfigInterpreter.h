@@ -22,10 +22,10 @@ private:
     vector<string>* keywords;
     vector<string>* regdefs;
     // Maps regular definition by its name in regdefs to its sequence of symbols
-    map<string, vector<string>>* regdef_map;
+    vector<pair<string, vector<string>>>* regdef_map;
     vector<string>* regexes;
     // Maps regular expression by its token name in regexes to its sequence of symbols
-    map<string, vector<string>>* regex_map;
+    vector<pair<string, vector<string>>>* regex_map;
 
     static const char* secondary_delimiters;
     static const regex punctuation_regex;
@@ -45,9 +45,9 @@ public:
     vector<string>* get_punctations() { return punctuations; };
     vector<string>* get_keywords() { return keywords; };
     vector<string>* get_regdefs() { return regdefs; };
-    map<string, vector<string>>* get_regdef_map() { return regdef_map; };
+    vector<pair<string, vector<string>>>* get_regdef_map() { return regdef_map; };
     vector<string>* get_regexes() { return regexes; };
-    map<string, vector<string>>* get_regex_map() { return regex_map; };
+    vector<pair<string, vector<string>>>* get_regex_map() { return regex_map; };
 
 };
 

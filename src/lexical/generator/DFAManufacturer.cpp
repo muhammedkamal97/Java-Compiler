@@ -113,7 +113,7 @@ DFAManufacturer::create_new_state(map<int, dfa_state *> *states_by_index,
 
     }
     if(accepted_index != -1){
-        this->new_tokens_indexes->insert(index, accepted_index);
+        this->new_tokens_indexes->insert(make_pair(index, accepted_index));
         this->accepted_states->insert(index);
     }
 }

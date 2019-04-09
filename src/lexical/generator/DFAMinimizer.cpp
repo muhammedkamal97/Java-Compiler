@@ -36,7 +36,7 @@ void DFAMinimizer::FillTransitionArray(vector<set<int>> final_states){
 
 void DFAMinimizer::PartitioningAcceptanceStates(){
     vector<set<int>> new_accepted_states  = GetMinimumStates(acceptance_states, true);
-    new_token_type = new TokenType[new_accepted_states.size()];
+    new_token_type = new TokenType*[new_accepted_states.size()];
     for(int i = 0; i < new_accepted_states.size(); i++){
         final_states.push_back(new_accepted_states[i]);
         new_tokens_indexes.insert({i+1, i});
@@ -136,8 +136,8 @@ bool DFAMinimizer::CanBeMerged(int state_1, int state_2, bool is_acceptance_stat
 
 
 bool DFAMinimizer::IsCompatible(int state_1, int state_2){
-    string token_type_1 = token_type[tokens_indexes.find(state_1)->second].name;
-    string token_type_2 = token_type[tokens_indexes.find(state_2)->second].name;
+    string token_type_1 = token_type[tokens_indexes.find(state_1)->second]->name;
+    string token_type_2 = token_type[tokens_indexes.find(state_2)->second]->name;
     if(token_type_1.compare(token_type_2)  == 0){
         return true;
     }

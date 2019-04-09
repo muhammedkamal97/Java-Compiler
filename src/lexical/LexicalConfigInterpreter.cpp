@@ -21,9 +21,9 @@ LexicalConfigInterpreter::LexicalConfigInterpreter(fstream *config, bool cacheab
     punctuations = new vector<string>;
     keywords = new vector<string>;
     regdefs = new vector<string>;
-    regdef_map = new map<string, vector<string>>;
+    regdef_map = new vector<pair<string, vector<string>>>;
     regexes = new vector<string>;
-    regex_map = new map<string, vector<string>>;
+    regex_map = new vector<pair<string, vector<string>>>;
 }
 
 void LexicalConfigInterpreter::generate_rules_map() {
@@ -98,7 +98,7 @@ void LexicalConfigInterpreter::parse_regdef(string line) {
         tokens_vector.push_back(token);
     }
     regdefs->push_back(name);
-    regdef_map->insert(pair<string, vector<string>>(name, tokens_vector));
+    regdef_map->emplace_back(pair<string, vector<string>>(name, tokens_vector));
 }
 
 
@@ -122,5 +122,5 @@ void LexicalConfigInterpreter::parse_regex(string line) {
         tokens_vector.push_back(token);
     }
     regexes->push_back(name);
-    regex_map->insert(pair<string, vector<string>>(name, tokens_vector));
+    regex_map->emplace_back(pair<string, vector<string>>(name, tokens_vector));
 }

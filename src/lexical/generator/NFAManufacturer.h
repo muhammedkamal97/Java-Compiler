@@ -44,6 +44,8 @@ public:
         return transition_array;
     }
 
+    NFA *nfa;
+    vector<TokenType *> *tokens_vec;
 };
 
 
