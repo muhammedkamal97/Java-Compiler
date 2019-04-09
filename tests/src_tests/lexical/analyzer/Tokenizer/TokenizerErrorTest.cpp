@@ -14,7 +14,7 @@
  * T1: ab* | b
  * T2: baa+
  */
-class TokenizerSanityTest : public ::testing::Test {
+class TokenizerErrorTest : public ::testing::Test {
 
 protected:
     virtual void SetUp() {
@@ -22,7 +22,7 @@ protected:
             transition_array[i] = new int[2] {array[i][0], array[i][1]};
 
         tokenizer = new Tokenizer(transition_array, meta_data, &input_map, acceptance_states, &acceptance_state_token,
-                (TokenType**)token_types, &input);
+                                  (TokenType**)token_types, &input);
     }
 
     int **transition_array = new int*[5];
@@ -39,29 +39,18 @@ protected:
     TokenType* token_types[2] = {new TokenType("T1"), new TokenType("T2")};
     map<int, int> acceptance_state_token = {{1, 0}, {2, 0}, {4, 1}};
 
-    fstream input = fstream("../../tests/src_tests/lexical/analyzer/Tokenizer/SanityTestProgram1");
+    fstream input = fstream("../../tests/src_tests/lexical/analyzer/Tokenizer/ErrorTestProgram");
 
     Tokenizer *tokenizer;
 
 };
 
-TEST_F(TokenizerSanityTest, checkHasInitialToken) {
-    ASSERT_TRUE(tokenizer->has_next_token());
-}
 
-TEST_F(TokenizerSanityTest, checkProcessedTokenLexemes) {
+TEST_F(TokenizerErrorTest, checkProcessedTokenLexemes) {
     vector<string> token_strings;
     while(tokenizer->has_next_token()) {
         token_strings.push_back(tokenizer->next_token()->lexeme);
     }
-    ASSERT_THAT(token_strings, ::testing::ElementsAre("ab", "a", "abbb", "a", "ab", "b", "baa", "abbbb", "a", "baaa"));
+    ASSERT_THAT(token_strings, ::testing::ElementsAre("ab", "a", "abbb", "a", "ab", "b", "b",  "a", "a", "abbbb", "a", "baaa", "b"));
 }
 
-TEST_F(TokenizerSanityTest, checkProcessedTokenTypes) {
-    vector<string> token_types;
-    while(tokenizer->has_next_token()) {
-        Token *token = tokenizer->next_token();
-        token_types.push_back(token->type->name);
-    }
-    ASSERT_THAT(token_types, ::testing::ElementsAre("T1", "T1", "T1", "T1", "T1", "T1", "T2", "T1", "T1", "T2"));
-}

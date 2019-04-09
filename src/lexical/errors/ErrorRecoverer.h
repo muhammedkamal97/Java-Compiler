@@ -18,7 +18,7 @@ private:
 public:
     ErrorRecoverer(ErrorLogger *reporter, operation_mode mode);
 
-    fstream *recover(fstream *input, operation_mode);
+    void recover(fstream *input, streamoff start_pos, int line, int line_pos, operation_mode mode);
 
     const vector<char> *get_errorneous_chars() const {
         return errorneous_chars;
