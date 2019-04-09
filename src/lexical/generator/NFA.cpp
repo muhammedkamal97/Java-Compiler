@@ -23,6 +23,17 @@ NFA::NFA(char c) {
 }
 
 NFA::NFA(string word) {
+    if(word == ""){
+        NFAstate* start = new NFAstate(false);
+        NFAstate* end = new NFAstate(true);
+        start->make_transition(end,epsilon);
+        this->starting = start;
+        this->ending = end;
+        this->accepted.insert(end);
+        this->all_states.insert(start);
+        this->all_states.insert(end);
+        return;
+    }
     this->starting = new NFAstate(false);
     NFAstate *prev = starting;
     NFAstate *curr;
@@ -191,12 +202,17 @@ NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_ma
     return transition_array;
 }
 
-void
-NFA::label_nfa(NFAstate *state) {
-    set<NFAstate *>::iterator it = all_states.begin();
-    state_number = 0;
-    while (it != all_states.end()) {
-        if ((*it)->label == -1) {
+void NFA::label_nfa(NFAstate* state) {
+    set<NFAstate*>::iterator it = all_states.begin();
+    while(it != all_states.end()){
+        (*it)->label = -1;
+        it++;
+    }
+    it = all_states.begin();
+    state_number = 1;
+    state->label = 0;
+    while(it != all_states.end()){
+        if((*it)->label == -1) {
             (*it)->label = state_number++;
         }
         it++;

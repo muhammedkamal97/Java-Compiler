@@ -8,13 +8,9 @@ NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions
         vector<pair<string,vector<string>>> definations,
         vector<string> key_words,
         vector<string> punctuations) {
-NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expressions,
-                                 vector<pair<string, vector<string>>> definations,
-                                 vector<string> key_words,
-                                 vector<string> punctuations) {
-    auto tokens_priorities_map = new map<string, pair<int, int>>();
-    int tokens_priority = 0;
-    NFA *def_nfa;
+    definations.resize(definations.size());
+    expressions.resize(expressions.size());
+    NFA* def_nfa;
     for (int i = 0; i < definations.size(); ++i) {
         string def = definations[i].first;
         vector<string> regex = definations[i].second;
@@ -28,11 +24,11 @@ NFAManufacturer::NFAManufacturer(vector<pair<string, vector<string>>> expression
 
     vector<NFA*> nfa_expressions;
     NFA* temp;
+
     for (int i = 0; i < expressions.size(); ++i) {
-        string exp = expressions[i].first;
         vector<string> regex = expressions[i].second;
         temp = evaluate_postfix(regex_to_postfix(regex));
-        temp->ending->accepted_pattern = exp;
+        temp->ending->accepted_pattern = expressions[i].first;
         nfa_expressions.push_back(temp);
     }
 
@@ -95,10 +91,9 @@ NFAManufacturer::generate_diagram() {
 NFA *
 NFAManufacturer::evaluate_postfix(vector<string> postfix) {
     //get first definition or character
-    stack<NFA *> eval;
-    stack<char> range;
-    NFA *t;
-    NFA *s;
+    stack<NFA*> eval;
+    NFA* t;
+    NFA* s;
     for (int i = 0; i < postfix.size(); ++i) {
         if (is_operator(postfix[i])) {
             switch (postfix[i][0]) {

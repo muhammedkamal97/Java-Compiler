@@ -46,6 +46,7 @@ public:
 
     NFA *nfa;
     vector<TokenType *> *tokens_vec;
+    vector<vector<set<int>>> transition_table;
 };
 
 
