@@ -18,7 +18,7 @@ class NFAManufacturer {
 private:
     map<char, int> *input_map;
     vector<set<int>*> *transition_array;
-    map<string,NFA*> definitions;
+    map<string,vector<string>> definitions;
     map<string,NFA*> patterns;
 
     bool is_definition(string def);

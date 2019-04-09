@@ -163,6 +163,12 @@ NFA::compine(vector<NFA *> patterns) {
 }
 
 
+NFA* NFA::copy() {
+
+}
+
+
+
 vector<vector<set<int>>>
 NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_map) {
     transition_array.resize(all_states.size());

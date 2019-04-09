@@ -15,9 +15,8 @@ NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions
     int tokens_priority = 0;
     for (int i = 0; i < definations.size(); ++i) {
         string def = definations[i].first;
-        vector<string> regex = definations[i].second;
-        def_nfa = evaluate_postfix(regex_to_postfix(regex));
-        this->definitions[def] = def_nfa;
+        vector<string> regex = regex_to_postfix(definations[i].second);
+        this->definitions[def] = regex;
     }
 
     vector<NFA *> nfa_expressions;
@@ -134,7 +133,7 @@ NFAManufacturer::evaluate_postfix(vector<string> postfix) {
         } else {
             //create NFA for character and definitions
             if (is_definition(postfix[i])) {
-                eval.push(this->definitions[postfix[i]]);
+                eval.push(evaluate_postfix(this->definitions[postfix[i]]));
             } else {
                 eval.push(new NFA(postfix[i]));
             }
