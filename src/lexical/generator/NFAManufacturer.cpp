@@ -153,6 +153,11 @@ NFAManufacturer::regex_to_postfix(vector<string> expression) {
         if (!is_operator(expression[j - 1]) && !is_operator(expression[j])) {
             temp.push_back("$");
         }
+        else if(!is_operator(expression[j - 1]) && expression[j] == "("){
+            temp.push_back("$");
+        }else if(expression[j-1] ==")" && !is_operator(expression[j])){
+            temp.push_back("$");
+        }
         temp.push_back(expression[j]);
     }
 
