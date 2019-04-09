@@ -38,9 +38,9 @@ LexicalComponent::build_component() {
 
     //TODO get rules to NFA module
 
-    auto nfa = new NFAManufacturer(*rules);
-    auto dfa = new DFAManufacturer(nfa->getTranisition_array(), nullptr, nullptr);
-    auto minimizer = new DFAMinimizer(dfa->getTransition_array(), dfa->getAccepted_states(), dfa->getTokens_indexes(),
-                                      nullptr, dfa->getMeta_data());
+//    auto nfa = new NFAManufacturer(*rules);
+//    auto dfa = new DFAManufacturer(nfa->getTranisition_array(), nullptr, nullptr);
+//    auto minimizer = new DFAMinimizer(dfa->getTransition_array(), dfa->getAccepted_states(), dfa->getTokens_indexes(),
+//                                      nullptr, dfa->getMeta_data());
 
 }
