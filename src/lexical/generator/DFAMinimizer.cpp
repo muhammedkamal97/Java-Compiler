@@ -4,7 +4,7 @@
 
 #include <cstring>
 #include "DFAMinimizer.h"
-#include "TokenType.h"
+#include "tokens/TokenType.h"
 
 
 using namespace std;

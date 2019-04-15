@@ -28,8 +28,7 @@ void NFAManufacturer::NFAManufacturers(vector<pair<string,vector<string>>> expre
     NFA *temp;
     tokens_vec = new vector<TokenType *>();
 
-    vector<NFA*> nfa_expressions;
-    NFA* temp;
+
 
     for (int i = 0; i < expressions.size(); ++i) {
         vector<string> regex = expressions[i].second;
