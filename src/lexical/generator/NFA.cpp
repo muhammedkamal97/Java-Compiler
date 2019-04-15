@@ -22,8 +22,9 @@ NFA::NFA(char c) {
     this->all_states.insert(end);
 }
 
-NFA::NFA(string word) {
-    if(word == ""){
+NFA::NFA(string *wrd) {
+    auto word = *wrd;
+    if(word == "" || word == "\\L"){
         NFAstate* start = new NFAstate(false);
         NFAstate* end = new NFAstate(true);
         start->make_transition(end,epsilon);
@@ -42,12 +43,14 @@ NFA::NFA(string word) {
         if (word[i] != '\\') {
             curr = new NFAstate(false);
             all_states.insert(curr);
+            int x = curr->id;
             stringstream ss;
             string s;
             ss << word[i];
             ss >> s;
             prev->make_transition(curr, s);
             prev = curr;
+
         }
     }
     curr->accept = true;
@@ -174,7 +177,7 @@ NFA::get_trasition_array(map<string, pair<int, int>> *tokens_index_priorities_ma
     transition_array.resize(all_states.size());
     token_indexes = new map<int, pair<int, int>>();
     for (int i = 0; i < transition_array.size(); ++i) {
-        transition_array[i].resize(260);
+        transition_array[i].resize(256);
     }
     accepted_states_indices = new set<int>();
     label_nfa(starting);

@@ -8,7 +8,7 @@
 
 void
 Compiler::compile(fstream *input) {
-    fstream lex_config("lex_config.txt");
+    fstream lex_config("config.txt");
     fstream lex_out("lex_out.txt", ios::app);
     SimpleSymbolTable *table = new SimpleSymbolTable;
     Component *lexical = new LexicalComponent(&lex_config, input, table);

@@ -35,11 +35,10 @@ private:
     ErrorLogger* errorLogger;
 
     static const set<char> delimiters;
-
     Token* process_following_token();
+
     void rewind_stream(streamoff offset);
 public:
-
     Tokenizer(int **transition_array, MetaData meta_data, map<char, int> *input_map, set<int> acceptance_states,
             map<int, int> *acceptance_state_token, TokenType** token_types, fstream *input);
 
@@ -48,6 +47,8 @@ public:
     bool has_next_token();
 
     bool is_error();
+
+    static map<int, int>*  static_acceptance_state_token;
 
 
 };

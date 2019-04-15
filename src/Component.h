@@ -34,7 +34,8 @@ public:
     void
     attach_to_slave_port(ComponentSlave *slave) {
         if (has_write_slave(slave)) return;
-        this->writes_slaves.emplace_back(slave);
+//        this->writes_slaves.push_back(slave);
+        this->write_slave = slave;
     }
 
     /* accept a new master to control the processing of input. Only one master can be accepted.
@@ -45,6 +46,7 @@ public:
         if (this->master != nullptr) return;
         if (this->master == nullptr) {
             this->master = this;
+            this->master->handshake_slave_channel(this);
             return;
         }
 
@@ -66,6 +68,7 @@ public:
             for (int i = 0; i < writes_slaves.size(); i++) {
                 writes_slaves[i]->notify(result);
             }
+            write_slave->notify(result);
         }
     }
 
@@ -74,6 +77,7 @@ public:
 
     Component(std::fstream *config, std::fstream *input){};
 
+    ComponentSlave *write_slave;
 };
 
 

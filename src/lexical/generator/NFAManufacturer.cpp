@@ -4,10 +4,15 @@
 
 #include "NFAManufacturer.h"
 
-NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions,
+
+
+void NFAManufacturer::NFAManufacturers(vector<pair<string,vector<string>>> expressions,
         vector<pair<string,vector<string>>> definations,
         vector<string> key_words,
         vector<string> punctuations) {
+
+    this->punctuations = punctuations;
+    transition_array = new vector<set<int>*>();
     definations.resize(definations.size());
     expressions.resize(expressions.size());
     NFA* def_nfa;
@@ -34,7 +39,8 @@ NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions
     }
 
     for (int i = 0; i < key_words.size(); ++i) {
-        temp = new NFA(key_words[i]);
+        string curr = key_words[i];
+        temp = new NFA(&curr);
         temp->ending->accepted_pattern = key_words[i];
 
         auto token = new TokenType{key_words[i], true}; //TODO keywords in symbol table?
@@ -47,7 +53,8 @@ NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions
     }
 
     for (int i = 0; i < punctuations.size(); ++i) {
-        temp = new NFA(punctuations[i]);
+        string curr = punctuations[i];
+        temp = new NFA(&curr);
         temp->ending->accepted_pattern = punctuations[i];
 
         auto token = new TokenType{punctuations[i], false};
@@ -59,28 +66,45 @@ NFAManufacturer::NFAManufacturer(vector<pair<string,vector<string>>> expressions
         nfa_expressions.push_back(temp);
     }
 
+
     for (int i = 0; i < expressions.size(); ++i) {
-        string exp = expressions[i].first;
         vector<string> regex = expressions[i].second;
         temp = evaluate_postfix(regex_to_postfix(regex));
-        temp->ending->accepted_pattern = exp;
+        temp->ending->accepted_pattern = expressions[i].first;
 
-        auto token = new TokenType{exp, exp == "id"};
+        auto token = new TokenType{expressions[i].first, expressions[i].first == "id"}; //TODO keywords in symbol table?
         temp->ending->accepted_token_type = token;
         tokens_vec->emplace_back(token);
-        tokens_priorities_map->insert(make_pair(exp, make_pair(tokens_priority, tokens_priority)));
+        tokens_priorities_map->insert(make_pair(expressions[i].first, make_pair(tokens_priority, tokens_priority)));
         tokens_priority++;
 
         nfa_expressions.push_back(temp);
     }
 
-
     nfa = NFA::compine(nfa_expressions);
 
-    vector<vector<set<int>>> transition_table = nfa->get_trasition_array(tokens_priorities_map);
-    for (int i = 0; i < transition_table.size(); i++) {
-        transition_array->emplace_back(&transition_table[i][0]);
-    }
+    transition_table = nfa->get_trasition_array(tokens_priorities_map);
+
+    //for (int i = 0; i < transition_table.size(); i++) {
+      //  transition_array->push_back(&transition_table[i][0]);
+    //}
+
+//    for (int i = 0; i < transition_table.size() ; ++i) {
+//        cout<< "state "<< i<<":";
+//        for (int j = 0; j < transition_table[i].size() ; ++j) {
+//            if(!transition_table[i][j].empty()){
+//                printf(" %c ",j);
+//                if(j < 0) printf("error");
+//                cout<<"{ ";
+//                for (auto k : transition_table[i][j]) {
+//                    cout<< k<< " ";
+//                }
+//                cout<<"}";
+//            }
+//        }
+//        cout<<endl;
+//    }
+
 }
 
 void
@@ -135,7 +159,7 @@ NFAManufacturer::evaluate_postfix(vector<string> postfix) {
             if (is_definition(postfix[i])) {
                 eval.push(evaluate_postfix(this->definitions[postfix[i]]));
             } else {
-                eval.push(new NFA(postfix[i]));
+                eval.push(new NFA(&postfix[i]));
             }
         }
     }

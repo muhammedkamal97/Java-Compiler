@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include "DFAMinimizer.h"
+#include "TokenType.h"
 
 
 using namespace std;
@@ -55,13 +56,14 @@ void DFAMinimizer::PartitioningNonAcceptanceStates(){
             set<int> temp = final_states[i];
             final_states.erase(final_states.begin()+i);
             final_states.insert(final_states.begin(),temp);
+            break;
         }
     }
-    for(int i = 0; i < final_states.size(); i++){
+    /*for(int i = 0; i < final_states.size(); i++){
         if(final_states[i].find(data.invalid_state_index) != final_states[i].end()){
             data.invalid_state_index = i;
         }
-    }
+    }*/
 }
 
 
@@ -145,17 +147,24 @@ bool DFAMinimizer::IsCompatible(int state_1, int state_2){
 }
 bool DFAMinimizer::GoingToSameStates(int state_1, int state_2){
     for(int i = 0; i < data.DFA_size.second; i++){
+        int x = input_transition_array[state_1][i];
+        int y = input_transition_array[state_2][i];
         if(input_transition_array[state_1][i] == input_transition_array[state_2][i]){
             continue;
-        }
-        if(GetPartitionNumber(input_transition_array[state_1][i], all_partitions) !=
-                GetPartitionNumber(input_transition_array[state_2][i], all_partitions)){
+        }else{
             return false;
         }
+        /*if(GetPartitionNumber(input_transition_array[state_1][i], all_partitions) !=
+                GetPartitionNumber(input_transition_array[state_2][i], all_partitions)){
+            return false;
+        }*/
     }
     return true;
 }
 int DFAMinimizer::GetPartitionNumber(int state, vector<set<int>> partitions){
+    if(state == -1){
+        return -1;
+    }
     for(int i = 0; i < partitions.size(); i++){
         if(partitions[i].find(state) != partitions[i].end()){
             return i;

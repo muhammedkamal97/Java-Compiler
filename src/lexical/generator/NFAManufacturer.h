@@ -20,18 +20,32 @@ private:
     vector<set<int>*> *transition_array;
     map<string,vector<string>> definitions;
     map<string,NFA*> patterns;
-
+    //-------------------------------
+    vector<string> punctuations;
+    vector<pair<string,vector<string>>> expressions;
+    vector<pair<string,vector<string>>> defination;
+    vector<string> key_words;
+    //---------------------------------
     bool is_definition(string def);
     bool is_operator(string str);
     bool unary_operator(string op);
     int operator_priority(char c);
     bool check_range(int i, vector<string> temp);
-
+    void NFAManufacturers(vector<pair<string,vector<string>>> expressions,
+    vector<pair<string,vector<string>>> definations,
+    vector<string> key_words,
+            vector<string> punctuations);
 public:
     NFAManufacturer(vector<pair<string,vector<string>>> expressions,
             vector<pair<string,vector<string>>> definations,
                     vector<string> key_words,
-                    vector<string> punctuations);
+                    vector<string> punctuations){
+        this->punctuations = punctuations;
+        this->expressions = expressions;
+        this->defination = definations;
+        this->key_words = key_words;
+        NFAManufacturers(this->expressions,this->defination, this->key_words, this->punctuations);
+    }
 
     void generate_diagram();
 

@@ -38,12 +38,12 @@ private:
     void PartitioningNonAcceptanceStates();
 
 public:
-    DFAMinimizer(vector<int *> input_transition_array, set<int> acceptance_states, map<int, int> tokens_indexes, TokenType **token_type, MetaData meta_data){
-        this->acceptance_states = acceptance_states;
-        this->input_transition_array = input_transition_array;
-        this->tokens_indexes = tokens_indexes;
+    DFAMinimizer(vector<int *> *input_transition_array, set<int>* acceptance_states, map<int, int> *tokens_indexes, TokenType **token_type, MetaData* meta_data){
+        this->acceptance_states = *acceptance_states;
+        this->input_transition_array = *input_transition_array;
+        this->tokens_indexes =* tokens_indexes;
         this->token_type = token_type;
-        this->data = meta_data;
+        this->data = *meta_data;
     }
     void Minimize();
 

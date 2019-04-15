@@ -17,9 +17,9 @@ LexicalBufferSlave::notify(void *notification) {
     Token *token = (Token *) notification;
     if (write_buffer->is_open()) {
         string lex = token->lexeme;
-        *write_buffer << lex;
+        *write_buffer << lex << endl;
     }
-    write_buffer->close();
+//    write_buffer->close();
 }
 
 LexicalBufferSlave::LexicalBufferSlave(fstream *write_buffer) : write_buffer(write_buffer) {}
