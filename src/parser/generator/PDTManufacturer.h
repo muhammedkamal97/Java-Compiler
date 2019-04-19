@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <tokens/TokenType.h>
+#include <parser/ProductionRules.h>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ private:
     vector<string> *terminals;
 
 public:
-    PDTManufacturer(map<string, vector<string> *> *productions, vector<string> * terminals);
+    PDTManufacturer(ProductionRules *productions, vector<string> * terminals);
 
     string **getPdt() const;
 

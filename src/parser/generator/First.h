@@ -10,7 +10,9 @@
 #include <boost/algorithm/string.hpp>
 #include <vector>
 #include <map>
+#include <parser/ProductionRules.h>
+
 using namespace std;
 
 map<string, vector<string> *> *
-compute_first(map<string, vector<string> *> *productions);
+compute_first(ProductionRules *productions);
