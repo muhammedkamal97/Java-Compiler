@@ -6,6 +6,6 @@
 
 
 map<string, vector<string> *> *
-compute_follow(map<string, vector<string> *> *productions) {
+compute_follow(ProductionRules *productions) {
 //TODO
 }

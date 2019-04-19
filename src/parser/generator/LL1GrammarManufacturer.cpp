@@ -4,7 +4,7 @@
 
 #include "LL1GrammarManufacturer.h"
 
-LL1GrammarManufacturer::LL1GrammarManufacturer(map<string, vector<string> *> *productions) : productions(productions) {}
+LL1GrammarManufacturer::LL1GrammarManufacturer(ProductionRules *productions) : productions(productions) {}
 
 map<string, vector<string> *> *
 LL1GrammarManufacturer::getProductions() const {

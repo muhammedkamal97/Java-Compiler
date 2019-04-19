@@ -7,6 +7,6 @@
 #include "First.h"
 
 map<string, vector<string> *> *
-compute_first(map<string, vector<string> *> *productions) {
+compute_first(ProductionRules *productions) {
 //TODO
 }

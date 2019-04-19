@@ -6,10 +6,10 @@
 #include "First.h"
 #include "Follow.h"
 
-PDTManufacturer::PDTManufacturer(map<string, vector<string> *> *productions,vector<string> * terminals) {
+PDTManufacturer::PDTManufacturer(ProductionRules *productions,vector<string> * terminals) {
     this->productions = productions;
     this->first = compute_first(this->productions);
-    this->follow = compute_follow(this->follow);
+    this->follow = compute_follow(this->productions);
     this->terminals = terminals;
 }
 

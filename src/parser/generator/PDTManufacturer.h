@@ -15,7 +15,7 @@ using namespace std;
 
 class PDTManufacturer {
 private:
-    map<string, vector<string> *> *productions;
+    ProductionRules *productions;
     map<string, vector<string> *> *first;
     map<string, vector<string> *> *follow;
     string **pdt;
