@@ -18,6 +18,7 @@ protected:
     vector<ComponentSlave *> writes_slaves;
     Component *work_slave;
 
+
     bool
     has_write_slave(ComponentSlave *slave) {
         auto it = this->writes_slaves.begin();

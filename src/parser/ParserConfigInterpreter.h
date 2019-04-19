@@ -6,8 +6,25 @@
 #define PROJECT_PARSERCONFIGINTERPRETER_H
 
 
-class ParserConfigInterpreter {
+#include <fstream>
+#include <boost/algorithm/string.hpp>
+#include <vector>
+#include <map>
 
+using namespace std;
+
+class ParserConfigInterpreter {
+private:
+    fstream* config;
+public:
+    ParserConfigInterpreter(std::fstream *config, bool cacheable = false);
+
+    void generate_production_rules();
+
+    map<string, vector<string> *> *get_production_rules();
+
+    vector<string> *
+    getTerminals();
 };
 
 
