@@ -10,6 +10,7 @@
 #include <boost/algorithm/string.hpp>
 #include <vector>
 #include <map>
+#include "ProductionRules.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ public:
 
     void generate_production_rules();
 
-    map<string, vector<string> *> *get_production_rules();
+    ProductionRules *get_production_rules();
 
     vector<string> *
     getTerminals();

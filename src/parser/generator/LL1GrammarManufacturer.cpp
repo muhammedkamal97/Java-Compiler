@@ -6,7 +6,7 @@
 
 LL1GrammarManufacturer::LL1GrammarManufacturer(ProductionRules *productions) : productions(productions) {}
 
-map<string, vector<string> *> *
+ProductionRules *
 LL1GrammarManufacturer::getProductions() const {
     return productions;
 }

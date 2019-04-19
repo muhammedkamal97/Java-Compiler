@@ -3,6 +3,7 @@
 //
 
 #include "ParserConfigInterpreter.h"
+#include "ProductionRules.h"
 
 vector<string> *
 ParserConfigInterpreter::getTerminals() {
@@ -20,7 +21,7 @@ ParserConfigInterpreter::generate_production_rules() {
 
 }
 
-map<string, vector<string> *> *
+ProductionRules *
 ParserConfigInterpreter::get_production_rules() {
     //TODO
     return nullptr;

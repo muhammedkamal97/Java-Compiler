@@ -14,11 +14,11 @@
 using namespace std;
 class LL1GrammarManufacturer {
 private:
-    map<string,vector<string>*> * productions;
+    ProductionRules * productions;
 public:
     LL1GrammarManufacturer(ProductionRules *productions);
 
-    map<string, vector<string> *> *getProductions() const;
+    ProductionRules *getProductions() const;
 };
 
 
