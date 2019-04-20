@@ -13,8 +13,10 @@ using namespace std;
 
 class ErrorLogger {
 private:
-    vector<Error> errors;
+    vector<Error*> *errors;
 public:
+    ErrorLogger();
+
     void report(string reporter, string error_msg, map<string, void *> *attr = nullptr);
 
     void report(Error *error);
