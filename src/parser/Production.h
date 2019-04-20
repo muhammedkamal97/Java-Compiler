@@ -26,6 +26,7 @@ struct Production {
     GrammarSymbol* name;
     bool has_epsilon;
     bool is_start_production;
+    bool is_sync = false;
     vector <vector< GrammarSymbol * > *> *productions;
 };
 

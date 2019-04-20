@@ -15,6 +15,8 @@
 #include <tokens/Token.h>
 #include <parser/Production.h>
 #include <queue>
+#include "parser/errors/ErrorRecoverer.h"
+#include "errors/ErrorLogger.h"
 
 using namespace std;
 
@@ -27,14 +29,16 @@ private:
     queue<Production *> * parse_tree;
     bool successfully_terminated = false;
     GrammarSymbol* start_symbol;
+    ErrorLogger *error_logger;
+    ErrorRecoverer *error_recoverer;
 
-    void error();
+    void error(Token *tkn, Production *prod);
 
 public:
     PredictiveParser(Production ***pdt, unordered_map<string, int> *non_terminal_map,
                      unordered_map<string, int> *terminal_map,GrammarSymbol* start_symbol);
 
-    Production *next_production(Token *tkn);
+    vector<Production *>*next_production(Token *tkn);
 
     bool has_next_production();
 
@@ -42,6 +46,9 @@ public:
     push_to_stack(Production *production);
 
     bool has_successfully_terminated() const;
+
+
+
 };
 
 

@@ -2,6 +2,8 @@
 // Created by mario_hunter on 4/19/19.
 //
 
+#include <errors/ErrorLogger.h>
+#include <parser/errors/ErrorRecoverer.h>
 #include "PredictiveParser.h"
 
 PredictiveParser::PredictiveParser(Production ***pdt, unordered_map<string, int> *non_terminal_map,
@@ -12,6 +14,8 @@ PredictiveParser::PredictiveParser(Production ***pdt, unordered_map<string, int>
     this->start_symbol = start_symbol;
     productions_stack->push(this->start_symbol);
     parse_tree = new queue<Production *>();
+    error_logger = new ErrorLogger();
+    error_recoverer = new ErrorRecoverer(error_logger);
 }
 
 bool
@@ -19,13 +23,12 @@ PredictiveParser::has_next_production() {
     return productions_stack->size() > 0;
 }
 
-Production *
+vector<Production *> *
 PredictiveParser::next_production(Token *tkn) {
-    //TODO
 
     GrammarSymbol *gram_symbol = productions_stack->top();
-
-    if (tkn == nullptr && productions_stack->size() == 1) {
+    auto res_prod = new vector<Production *>();
+    if ((tkn == nullptr || tkn->type->name == "$") && productions_stack->size() == 1) {
         //both input and productions ended gracefully
         successfully_terminated = true;
         productions_stack->pop();
@@ -34,8 +37,10 @@ PredictiveParser::next_production(Token *tkn) {
     } else if (gram_symbol->type == Terminal) {
         if ((gram_symbol->value) == tkn->type->name) {
             productions_stack->pop();
-        } else {
-            error();
+            return nullptr;
+        }else{
+            error(tkn, nullptr);
+            return next_production(tkn);
         }
 
     } else if (gram_symbol->type == NonTerminal) {
@@ -43,22 +48,29 @@ PredictiveParser::next_production(Token *tkn) {
         int terminal_index = terminal_map->at(tkn->type->name);
 
         Production *prod = pdt[non_terminal_index][terminal_index];
-        if (prod == nullptr) error();
+        if (prod == nullptr || prod->is_sync) {
+            error(tkn, prod);
+            return nullptr;
+        }
 
         productions_stack->pop();
 
         push_to_stack(prod);
 
         parse_tree->push(prod);
-        next_production(tkn);
-        return prod;
+        res_prod->push_back(prod);
+        auto tmp = next_production(tkn);
+        if (tmp != nullptr) res_prod->insert(res_prod->end(), tmp->begin(), tmp->end());
+        return res_prod;
     }
+    error(tkn, nullptr);
     return nullptr;
 }
 
 void
-PredictiveParser::error() {
-    //TODO
+PredictiveParser::error(Token *tkn, Production *prod) {
+    error_recoverer->recover(productions_stack, tkn, prod);
+
 }
 
 void
