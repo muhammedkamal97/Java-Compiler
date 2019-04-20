@@ -13,24 +13,35 @@
 #include <tokens/TokenType.h>
 #include <stack>
 #include <tokens/Token.h>
+#include <parser/Production.h>
+#include <queue>
 
 using namespace std;
 
 class PredictiveParser {
 private:
-    string **pdt;
-    map<string, int> *non_terminal_map;
-    map<string, int> *terminal_map;
-    stack<string> * productions_stack;
+    Production ***pdt;
+    unordered_map<string, int> *non_terminal_map;
+    unordered_map<string, int> *terminal_map;
+    stack<GrammarSymbol *> *productions_stack;
+    queue<Production *> * parse_tree;
+    bool successfully_terminated = false;
+    GrammarSymbol* start_symbol;
 
+    void error();
 
 public:
-    PredictiveParser(string **pdt, map<string, int> *non_terminal_map, map<string, int> *terminal_map);
+    PredictiveParser(Production ***pdt, unordered_map<string, int> *non_terminal_map,
+                     unordered_map<string, int> *terminal_map,GrammarSymbol* start_symbol);
 
-    string next_production(Token* tkn);
+    Production *next_production(Token *tkn);
 
     bool has_next_production();
 
+    void
+    push_to_stack(Production *production);
+
+    bool has_successfully_terminated() const;
 };
 
 

@@ -32,7 +32,7 @@ ParserComponent::build_component() {
     auto non_terminal_map = pdt_manufacturer->getTerminal_map();
     auto pdt = pdt_manufacturer->getPdt();
 
-    pdt_parser = new PredictiveParser(pdt, non_terminal_map, terminal_map);
+    pdt_parser = new PredictiveParser(pdt, non_terminal_map, terminal_map, nullptr);
 
 }
 

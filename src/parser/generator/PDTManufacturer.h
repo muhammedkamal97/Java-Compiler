@@ -18,19 +18,19 @@ private:
     ProductionRules *productions;
     map<string, vector<string> *> *first;
     map<string, vector<string> *> *follow;
-    string **pdt;
-    map<string, int> *non_terminal_map;
-    map<string, int> *terminal_map;
+    Production ***pdt;
+    unordered_map<string, int> *non_terminal_map;
+    unordered_map<string, int> *terminal_map;
     vector<string> *terminals;
 
 public:
     PDTManufacturer(ProductionRules *productions, vector<string> * terminals);
 
-    string **getPdt() const;
+    Production ***getPdt() const;
 
-    map<string, int> *getNon_terminal_map() const;
+    unordered_map<string, int> *getNon_terminal_map() const;
 
-    map<string, int> *getTerminal_map() const;
+    unordered_map<string, int> *getTerminal_map() const;
 
 
 };

@@ -11,10 +11,23 @@
 using namespace std;
 
 
+enum symbol_type {
+    Terminal, NonTerminal
+};
+
+struct GrammarSymbol{
+    string  value;
+    symbol_type type;
+    bool is_epsilon = false;
+
+};
+
 struct Production {
-    string name;
+    GrammarSymbol* name;
     bool has_epsilon;
     bool is_start_production;
-    vector <vector< string > *> productions;
+    vector <vector< GrammarSymbol * > *> *productions;
 };
+
+
 #endif //COMPILER_PRODUCTION_H

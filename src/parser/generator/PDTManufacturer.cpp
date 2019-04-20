@@ -13,17 +13,17 @@ PDTManufacturer::PDTManufacturer(ProductionRules *productions,vector<string> * t
     this->terminals = terminals;
 }
 
-string **
+Production ***
 PDTManufacturer::getPdt() const {
     return pdt;
 }
 
-map<string, int> *
+unordered_map<string, int> *
 PDTManufacturer::getNon_terminal_map() const {
     return non_terminal_map;
 }
 
-map<string, int> *
+unordered_map<string, int> *
 PDTManufacturer::getTerminal_map() const {
     return terminal_map;
 }
