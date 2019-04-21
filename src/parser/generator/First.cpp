@@ -10,8 +10,13 @@ map<string, vector<string> *> *
 compute_first(ProductionRules *productions) {
     ProductionRules *p = productions;
     map<string,set<string>> first_sets;
+    map<string,bool> dp;
     for(string non_terminal : *productions->non_terminals){
-        first(&first_sets,non_terminal,p);
+        dp[non_terminal] = false;
+    }
+
+    for(string non_terminal : *productions->non_terminals){
+        first(&first_sets,non_terminal,p,&dp);
     }
     map<string,vector<string>*>* result = new map<string,vector<string>*>();
 
@@ -28,11 +33,17 @@ compute_first(ProductionRules *productions) {
 
 
 void first(map<string,set<string>> *first_sets,string non_terminal,
-        ProductionRules *productions){
+        ProductionRules *productions,
+        map<string,bool> *dp){
 
     int non_terminal_index = (*productions->production_rules_indexes)[non_terminal];
     Production non_terminal_productions =
                                      *(*(productions->production_rules) + non_terminal_index);
+
+    if((*dp)[non_terminal]){
+        return;
+    }
+    (*dp)[non_terminal] = true;
 
     for(vector<string> * production : non_terminal_productions.productions){
         for(string symbol : *production){
@@ -44,7 +55,7 @@ void first(map<string,set<string>> *first_sets,string non_terminal,
                 (*first_sets)[non_terminal].insert(symbol);
                 break;
             }
-            first(first_sets,symbol,productions);
+            first(first_sets,symbol,productions,dp);
             for(string st : (*first_sets)[symbol]){
                 (*first_sets)[non_terminal].insert(st);
             }

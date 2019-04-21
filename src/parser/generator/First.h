@@ -25,4 +25,5 @@ contain_epsilon(set<string> s);
 
 void
 first(map<string,set<string>> *first_sets,string non_terminal,
-           ProductionRules *productions);
+           ProductionRules *productions,
+            map<string,bool> *dp);
