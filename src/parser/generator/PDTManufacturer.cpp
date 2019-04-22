@@ -123,10 +123,11 @@ Production *PDTManufacturer::getProduction(int non_terminal_index, int grammer_s
 }
 
 Production *PDTManufacturer::cloneProduction(Production *old_production){
-    Production *new_production = new Production();
-    new_production->has_epsilon = old_production->has_epsilon;
-    new_production->is_start_production = old_production->is_start_production;
-    new_production->name = old_production->name;
+    //    Production(GrammarSymbol *name, bool has_epsilon, bool is_start_production) : name(name), has_epsilon(has_epsilon),
+    //                                                                                  is_start_production(
+    //                                                                                          is_start_production) {
+    Production *new_production = new Production(old_production->name, old_production->has_epsilon, old_production->is_start_production);
+
     new_production->is_sync = old_production->is_sync;
     return new_production;
 }
