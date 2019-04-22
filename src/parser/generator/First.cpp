@@ -22,9 +22,17 @@ compute_first(ProductionRules *productions) {
 
     for(auto it : first_sets){
         vector<string>* temp = new vector<string>();
+        // ensure that epsilon(\\L) will always be at index 0
+        // if it exists
+        if(contain_epsilon(it.second)){
+            temp->push_back("\\L");
+            it.second.erase("\\L");
+        }
+
         for(string st : it.second){
             temp->push_back(st);
         }
+
         (*result)[it.first] = temp;
     }
     return result;
