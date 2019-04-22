@@ -7,6 +7,8 @@
 
 #endif //PROJECT_FOLLOW_H
 #include <boost/algorithm/string.hpp>
+#include <boost/config.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <vector>
 #include <map>
 #include <parser/ProductionRules.h>

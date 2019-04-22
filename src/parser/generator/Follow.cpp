@@ -80,6 +80,7 @@ compute_follow(ProductionRules *productions, map<string, vector<string>*>* first
                                 follow_sets->at(current_symbol_string)->insert(terminal);
                             }
                         }
+                        j++;
                     }
                 }
 
@@ -96,8 +97,8 @@ compute_follow(ProductionRules *productions, map<string, vector<string>*>* first
 
     // Convert dependency graph to DAG and perform topological sorting
 
-    map<int, vector<int>*>* component_to_nodes;
-    map<int, set<string>*>* component_follow_set_map;
+    map<int, vector<int>*>* component_to_nodes = new map<int, vector<int>*>;
+    map<int, set<string>*>* component_follow_set_map = new map<int, set<string>*>;
     Graph dag = to_dag(graph, non_terminals_count, component_to_nodes);
     vector<int>* topological_order = topological_sort(dag);
 
@@ -141,7 +142,7 @@ compute_follow(ProductionRules *productions, map<string, vector<string>*>* first
 
 
     // Format output
-    map<string, vector<string>*>* follow_vectors;
+    map<string, vector<string>*>* follow_vectors = new map<string, vector<string>*>;
     for(auto non_terminal : *productions->non_terminals) {
         set<string>* follow_set = follow_sets->at(non_terminal);
         follow_vectors->insert(make_pair(non_terminal, new vector<string>(follow_set->begin(), follow_set->end())));
