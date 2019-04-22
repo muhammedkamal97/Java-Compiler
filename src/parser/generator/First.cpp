@@ -50,6 +50,9 @@ void first(map<string,set<string>> *first_sets,string non_terminal,
             string s = symbol;
             if(is_terminal(symbol,productions) && symbol != "\\L"){
                 (*first_sets)[non_terminal].insert(symbol);
+                if(contain_epsilon((*first_sets)[non_terminal])){
+                    (*first_sets)[non_terminal].erase("\\L");
+                }
                 break;
             }else if(symbol == "\\L"){
                 (*first_sets)[non_terminal].insert(symbol);
@@ -60,9 +63,16 @@ void first(map<string,set<string>> *first_sets,string non_terminal,
                 (*first_sets)[non_terminal].insert(st);
             }
             if(!contain_epsilon((*first_sets)[symbol])){
+                if(contain_epsilon((*first_sets)[non_terminal])){
+                    (*first_sets)[non_terminal].erase("\\L");
+                }
                 break;
             }
         }
+    }
+
+    if(non_terminal_productions.has_epsilon){
+        (*first_sets)[non_terminal].insert("\\L");
     }
 
 }
