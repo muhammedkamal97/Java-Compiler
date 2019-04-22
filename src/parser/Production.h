@@ -20,13 +20,23 @@ struct GrammarSymbol{
     symbol_type type;
     bool is_epsilon = false;
 
+    GrammarSymbol(const string &value, symbol_type type, bool is_epsilon = false) : value(value), type(type),
+                                                                            is_epsilon(is_epsilon) {}
+
 };
 
 struct Production {
     GrammarSymbol* name;
     bool has_epsilon;
     bool is_start_production;
+    bool is_sync = false;
     vector <vector< GrammarSymbol * > *> *productions;
+
+    Production(GrammarSymbol *name, bool has_epsilon, bool is_start_production) : name(name), has_epsilon(has_epsilon),
+                                                                                  is_start_production(
+                                                                                          is_start_production) {
+        productions = new vector <vector< GrammarSymbol * > *>;
+    }
 };
 
 
