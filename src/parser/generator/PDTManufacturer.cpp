@@ -8,10 +8,10 @@
 #include "Follow.h"
 
 
-PDTManufacturer::PDTManufacturer(ProductionRules *production_rules,vector<string> * terminals) {
+PDTManufacturer::PDTManufacturer(ProductionRules *production_rules, vector<string> *terminals) {
     this->production_rules = production_rules;
     this->first = compute_first(this->production_rules);
-    this->follow = compute_follow(this->production_rules,this->first);
+    this->follow = compute_follow(this->production_rules, this->first);
     this->terminals = terminals;
     vector<string> temp(production_rules->non_terminals->begin(),
                         production_rules->non_terminals->end());
@@ -22,31 +22,35 @@ PDTManufacturer::PDTManufacturer(ProductionRules *production_rules,vector<string
 }
 
 
-void PDTManufacturer::createPDT(){
+void
+PDTManufacturer::createPDT() {
     constructNonTerminalMap();
     constructTerminalMap();
     initPDTTable();
     fillPDT();
 }
 
-void PDTManufacturer::constructNonTerminalMap(){
-    for(int i = 0; i < non_terminals.size(); i++){
-        non_terminal_map->insert({non_terminals[i],i});
+void
+PDTManufacturer::constructNonTerminalMap() {
+    for (int i = 0; i < non_terminals.size(); i++) {
+        non_terminal_map->insert({non_terminals[i], i});
     }
 }
 
-void PDTManufacturer::constructTerminalMap(){
-    for(int i = 0; i < terminals->size(); i++){
-        terminal_map->insert({(*terminals)[i],i});
+void
+PDTManufacturer::constructTerminalMap() {
+    for (int i = 0; i < terminals->size(); i++) {
+        terminal_map->insert({(*terminals)[i], i});
     }
 }
 
-void PDTManufacturer::initPDTTable(){
+void
+PDTManufacturer::initPDTTable() {
     int rows = production_rules->non_terminals->size();
-    int cols = terminals->size()+1;
+    int cols = terminals->size() + 1;
     pdt = new Production **[rows];
-    for(int i = 0; i < rows; i++){
-        pdt[i] = new Production*[cols];
+    for (int i = 0; i < rows; i++) {
+        pdt[i] = new Production *[cols];
     }
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -56,70 +60,78 @@ void PDTManufacturer::initPDTTable(){
 }
 
 
-void PDTManufacturer::fillPDT(){
-    for(int i = 0; i < non_terminals.size(); i++){
+void
+PDTManufacturer::fillPDT() {
+    for (int i = 0; i < non_terminals.size(); i++) {
         int non_terminal_index = production_rules->production_rules_indexes->at(non_terminals[i]);
         fillPDTRow(i, non_terminal_index);
     }
 }
 
 
-void PDTManufacturer::fillPDTRow(int row, int non_terminal_index){
+void
+PDTManufacturer::fillPDTRow(int row, int non_terminal_index) {
     bool is_follow_slots_filled = false;
-    vector <vector< GrammarSymbol * > *> *single_production = production_rules->production_rules[non_terminal_index]->productions;
+    vector<vector<GrammarSymbol *> *> *single_production = production_rules->production_rules[non_terminal_index]->productions;
     string non_terminal = production_rules->production_rules[non_terminal_index]->name->value;
-    for(int j = 0; j < single_production->size(); j++){
+    for (int j = 0; j < single_production->size(); j++) {
         string symbol = (*single_production)[j]->at(0)->value;
         bool is_terminal = terminal_map->find(symbol) != terminal_map->end();
-        if(is_terminal){
+        if (is_terminal) {
             Production *production = getProduction(non_terminal_index, j, single_production, false, false);
             pdt[row][terminal_map->find(symbol)->second] = production;
-        }else{
-            addFirstTerminals(symbol, row, j,non_terminal_index, single_production);
+        } else {
+            addFirstTerminals(symbol, row, j, non_terminal_index, single_production);
         }
-        if(!is_terminal && (containsEpsilon(first->find(symbol)->second))){
+        if (!is_terminal && (containsEpsilon(first->find(symbol)->second))) {
             is_follow_slots_filled = true;
             addFollowTerminals(non_terminal, row, non_terminal_index, j, single_production, false);
         }
     }
-    if(production_rules->production_rules[non_terminal_index]->has_epsilon){
+    if (production_rules->production_rules[non_terminal_index]->has_epsilon) {
         addFollowTerminals(non_terminal, row, non_terminal_index, 0, single_production, true);
         is_follow_slots_filled = true;
     }
-    if(!is_follow_slots_filled) {
+    if (!is_follow_slots_filled) {
         addSyncSlots(non_terminal, row, non_terminal_index, 0, single_production);
     }
 }
 
 
-void PDTManufacturer::addSyncSlots(string symbol, int row, int non_terminal_index, int grammer_symbol_vector_index, vector <vector< GrammarSymbol * > *> *single_production){
+void
+PDTManufacturer::addSyncSlots(string symbol, int row, int non_terminal_index, int grammer_symbol_vector_index,
+                              vector<vector<GrammarSymbol *> *> *single_production) {
     vector<string> *follow_terminals = follow->find(symbol)->second;
-    for(int k = 0; k < follow_terminals->size(); k++){
-        Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, false, true);
-        int i = row,j;
-        if((*follow_terminals)[k].compare("$") == 0){
-            j= terminal_map->size();
+    for (int k = 0; k < follow_terminals->size(); k++) {
+        Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production,
+                                               false, true);
+        int i = row, j;
+        if ((*follow_terminals)[k].compare("$") == 0) {
+            j = terminal_map->size();
 //            pdt[row][terminal_map->size()] = production;
-        } else{
-            j=terminal_map->find((*follow_terminals)[k])->second;
+        } else {
+            j = terminal_map->find((*follow_terminals)[k])->second;
 //            pdt[row][terminal_map->find((*follow_terminals)[k])->second] = production;
         }
 
-        if(pdt[i][j] == nullptr) return;
+        if (pdt[i][j] == nullptr) return;
         pdt[i][j] = production;
     }
 }
-Production *PDTManufacturer::getProduction(int non_terminal_index, int grammer_symbol_vector_index, vector <vector< GrammarSymbol * > *> *productions, bool epsilon, bool is_sync){
-    Production *old_production =  (production_rules->production_rules[non_terminal_index]);
+
+Production *
+PDTManufacturer::getProduction(int non_terminal_index, int grammer_symbol_vector_index,
+                               vector<vector<GrammarSymbol *> *> *productions, bool epsilon, bool is_sync) {
+    Production *old_production = (production_rules->production_rules[non_terminal_index]);
     Production *new_production = cloneProduction(old_production);
-    if(epsilon) {
+    if (epsilon) {
         new_production->has_epsilon = true;
 
-    }else if (is_sync){
+    } else if (is_sync) {
         new_production->is_sync = true;
         new_production->has_epsilon = false;
 
-    }else{
+    } else {
         vector<vector<GrammarSymbol *> *> *production_vector = new vector<vector<GrammarSymbol *> *>();
         vector<GrammarSymbol *> *grammerSymbols = (*productions)[grammer_symbol_vector_index];
         production_vector->push_back(grammerSymbols);
@@ -129,48 +141,67 @@ Production *PDTManufacturer::getProduction(int non_terminal_index, int grammer_s
     return new_production;
 }
 
-Production *PDTManufacturer::cloneProduction(Production *old_production){
+Production *
+PDTManufacturer::cloneProduction(Production *old_production) {
     //    Production(GrammarSymbol *name, bool has_epsilon, bool is_start_production) : name(name), has_epsilon(has_epsilon),
     //                                                                                  is_start_production(
     //                                                                                          is_start_production) {
-    Production *new_production = new Production(old_production->name, old_production->has_epsilon, old_production->is_start_production);
+    Production *new_production = new Production(old_production->name, old_production->has_epsilon,
+                                                old_production->is_start_production);
 
     new_production->is_sync = old_production->is_sync;
     return new_production;
 }
 
-void PDTManufacturer::addFirstTerminals(string symbol, int row, int grammer_symbol_vector_index,int non_terminal_index, vector <vector< GrammarSymbol * > *> *single_production){
+void
+PDTManufacturer::addFirstTerminals(string symbol, int row, int grammer_symbol_vector_index, int non_terminal_index,
+                                   vector<vector<GrammarSymbol *> *> *single_production) {
     vector<string> *first_terminals = first->find(symbol)->second;
     int k;
-    if(containsEpsilon(first->find(symbol)->second)){
+    if (containsEpsilon(first->find(symbol)->second)) {
         k = 1;
-    } else{
+    } else {
         k = 0;
     }
-    for( ;k < first_terminals->size(); k++){
-        Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, false, false);
-        pdt[row][terminal_map->find((*first_terminals)[k])->second] = production;
+    for (; k < first_terminals->size(); k++) {
+        Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production,
+                                               false, false);
+        int j = terminal_map->find((*first_terminals)[k])->second;
+        if (pdt[row][j] != nullptr) throw "Gotcha";
+        pdt[row][j] = production;
     }
 }
 
-void PDTManufacturer::addFollowTerminals(string symbol, int row, int non_terminal_index, int grammer_symbol_vector_index, vector <vector< GrammarSymbol * > *> *single_production, bool epsilon){
+void
+PDTManufacturer::addFollowTerminals(string symbol, int row, int non_terminal_index, int grammer_symbol_vector_index,
+                                    vector<vector<GrammarSymbol *> *> *single_production, bool epsilon) {
     vector<string> *follow_terminals = follow->find(symbol)->second;
 
-    for(int k = 0; k < follow_terminals->size(); k++){
-        if((*follow_terminals)[k].compare("$") == 0){
-            Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, epsilon, false);
-            pdt[row][terminals->size()] = production;
-        } else{
-            Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, epsilon, false);
-            pdt[row][terminal_map->find((*follow_terminals)[k])->second] = production;
+    for (int k = 0; k < follow_terminals->size(); k++) {
+        int j;
+        Production *production;
+        if ((*follow_terminals)[k].compare("$") == 0) {
+            production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, epsilon,
+                                       false);
+//            pdt[row][terminals->size()] = production;
+            j = terminals->size();
+        } else {
+            production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, epsilon,
+                                       false);
+//            pdt[row][terminal_map->find((*follow_terminals)[k])->second] = production;
+            j = terminal_map->find((*follow_terminals)[k])->second;
         }
+
+        if (pdt[row][j] != nullptr) throw "Gotcha";
+        pdt[row][j] = production;
     }
 
 }
 
 
-bool PDTManufacturer::containsEpsilon(vector<string> *first_terminals){
-    if ((*first_terminals)[0].compare("\\L") == 0){
+bool
+PDTManufacturer::containsEpsilon(vector<string> *first_terminals) {
+    if ((*first_terminals)[0].compare("\\L") == 0) {
         return true;
     }
     return false;
