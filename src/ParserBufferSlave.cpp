@@ -18,11 +18,18 @@ ParserBufferSlave::get_write_stream() {
 
 void
 ParserBufferSlave::notify(void *notification) {
-    vector<Production*> *prods = (vector<Production*>  *) notification;
+    vector<Production *> *prods = (vector<Production *> *) notification;
     if (write_buffer->is_open()) {
-        for(Production* elem : *prods){
-            if(elem->productions->size() == 0) continue;
-            for(GrammarSymbol* symbol : *elem->productions->at(0)){
+        for (Production *elem : *prods) {
+            if (elem->is_start_production) {
+                *write_buffer << elem->name->value << endl;
+
+            }
+            if (elem->has_epsilon) {
+                *write_buffer << "\\L" << endl;
+                continue;
+            }
+            for (GrammarSymbol *symbol : *elem->productions->at(0)) {
                 *write_buffer << symbol->value << " ";
             }
             *write_buffer << endl;
