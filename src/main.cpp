@@ -12,7 +12,7 @@ main(int ac, char **av) {
     try {
         compiler->compile(&inp);
     }catch(exception e){
-        std::cerr << "Your input is ill-formed" << endl;
+        std::cerr << "Your input is a hideous abomination " << endl;
     }
 
 
