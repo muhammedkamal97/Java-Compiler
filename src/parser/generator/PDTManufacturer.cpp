@@ -114,7 +114,7 @@ PDTManufacturer::addSyncSlots(string symbol, int row, int non_terminal_index, in
 //            pdt[row][terminal_map->find((*follow_terminals)[k])->second] = production;
         }
 
-        if (pdt[i][j] == nullptr) return;
+        if (pdt[i][j] != nullptr) return;
         pdt[i][j] = production;
     }
 }
@@ -167,7 +167,7 @@ PDTManufacturer::addFirstTerminals(string symbol, int row, int grammer_symbol_ve
         Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production,
                                                false, false);
         int j = terminal_map->find((*first_terminals)[k])->second;
-        if (pdt[row][j] != nullptr) throw "Gotcha";
+        if (pdt[row][j] != nullptr) throw std::runtime_error(std::string("This grammmar is not LL(1)"));
         pdt[row][j] = production;
     }
 }
@@ -192,7 +192,7 @@ PDTManufacturer::addFollowTerminals(string symbol, int row, int non_terminal_ind
             j = terminal_map->find((*follow_terminals)[k])->second;
         }
 
-        if (pdt[row][j] != nullptr) throw "Gotcha";
+        if (pdt[row][j] != nullptr) throw std::runtime_error(std::string("This grammmar is not LL(1)"));
         pdt[row][j] = production;
     }
 
