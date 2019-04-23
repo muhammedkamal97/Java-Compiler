@@ -21,6 +21,7 @@ ParserBufferSlave::notify(void *notification) {
     vector<Production*> *prods = (vector<Production*>  *) notification;
     if (write_buffer->is_open()) {
         for(Production* elem : *prods){
+            if(elem->productions->size() == 0) continue;
             for(GrammarSymbol* symbol : *elem->productions->at(0)){
                 *write_buffer << symbol->value << " ";
             }

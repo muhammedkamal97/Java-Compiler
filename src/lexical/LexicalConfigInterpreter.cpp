@@ -56,7 +56,7 @@ void LexicalConfigInterpreter::parse_punctations(string line) {
         string token = *tok_iter;
         if (*tok_iter == "\\") {    // Merge with next character
             tok_iter++;
-            token = "\\" + *tok_iter;
+            token =  *tok_iter;
         }
         punctuations->push_back(token);
     }
