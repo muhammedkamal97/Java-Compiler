@@ -9,6 +9,12 @@ main(int ac, char **av) {
     std::cout << "Hello, World!" << std::endl;
     fstream inp("test.txt");
     auto *compiler = new Compiler();
-    compiler->compile(&inp);
+    try {
+        compiler->compile(&inp);
+    }catch(exception e){
+        std::cerr << "Your input is ill-formed" << endl;
+    }
+
+
     return 0;
 }

@@ -12,7 +12,7 @@
 void
 Compiler::compile(fstream *input) {
     fstream lex_config("config.txt");
-    fstream parser_config("parser_config.txt");
+    fstream parser_config("parser_config_correct.txt");
     fstream lex_out("lex_out.txt", ios::app);
     fstream parser_out("parser_out.txt", ios::app);
 
