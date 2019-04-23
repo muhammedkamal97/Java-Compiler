@@ -20,19 +20,20 @@ void
 ParserComponent::build_component() {
     auto interpreter = new ParserConfigInterpreter(this->config);
     interpreter->generate_production_rules();
-    auto terminals = interpreter->getTerminals();
+    vector<string>* terminals = interpreter->getTerminals();
 
     auto rules = interpreter->get_production_rules();
+    auto start_symbol = interpreter->get_start_symbol();
 
     auto ll1_manufacturer = new LL1GrammarManufacturer(rules);
     rules = ll1_manufacturer->getProductions();
 
     auto pdt_manufacturer = new PDTManufacturer(rules, terminals);
-    auto terminal_map = pdt_manufacturer->getNon_terminal_map();
-    auto non_terminal_map = pdt_manufacturer->getTerminal_map();
+    auto non_terminal_map = pdt_manufacturer->getNon_terminal_map();
+    auto terminal_map = pdt_manufacturer->getTerminal_map();
     auto pdt = pdt_manufacturer->getPdt();
 
-    pdt_parser = new PredictiveParser(pdt, non_terminal_map, terminal_map, nullptr);
+    pdt_parser = new PredictiveParser(pdt, non_terminal_map, terminal_map, start_symbol);
 
 }
 
@@ -41,8 +42,8 @@ ParserComponent::process_next_input() {
     auto tkn = (Token*) this->work_slave->process_next_input();
     if(tkn == nullptr) return tkn;
     if(pdt_parser->has_next_production()){
-        auto string = pdt_parser->next_production(tkn);
-        return &string;
+        auto prods = pdt_parser->next_production(tkn);
+        return prods;
     }
     return nullptr;
 }

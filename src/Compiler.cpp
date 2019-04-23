@@ -22,12 +22,13 @@ Compiler::compile(fstream *input) {
     Component *parser = new ParserComponent(&parser_config, nullptr);
     parser->attach_to_master_channel(nullptr); //leave null
     //TODO fix issue of buffer here
-//    parser->attach_to_slave_port(new ParserBufferSlave(&parser_out));
+    parser->attach_to_slave_port(new ParserBufferSlave(&parser_out));
 
 
     Component *lexical = new LexicalComponent(&lex_config, input, table);
     lexical->attach_to_master_channel(parser); // leave null
     lexical->attach_to_slave_port(new LexicalBufferSlave(&lex_out));
+//    lexical->attach_to_slave_port(parser);
 
     parser->start_work_slaves();
 }

@@ -20,12 +20,13 @@ const char* ParserConfigInterpreter::epsilon_string = "\\L";
 
 vector<string> *
 ParserConfigInterpreter::getTerminals() {
-    return nullptr;
+    return terminals;
 }
 
 ParserConfigInterpreter::ParserConfigInterpreter(std::fstream *config, bool cacheable) {
     this->config = config;
     productions_vector = new vector<Production*>;
+    terminals = new vector<string>();
 }
 
 void
@@ -82,6 +83,8 @@ ParserConfigInterpreter::parse_prouction(string line) {
                 if (token == epsilon_string) {
                     production->has_epsilon = true;
                     grammarSymbol->is_epsilon = true;
+                }else{
+                    terminals->push_back(token);
                 }
             }
             else {
@@ -98,4 +101,9 @@ ParserConfigInterpreter::parse_prouction(string line) {
 ProductionRules *
 ParserConfigInterpreter::get_production_rules() {
     return rules;
+}
+
+GrammarSymbol *
+ParserConfigInterpreter::get_start_symbol() {
+    return (rules->production_rules[0])->name;
 }

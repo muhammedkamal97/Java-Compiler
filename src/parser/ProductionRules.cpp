@@ -17,4 +17,5 @@ ProductionRules::ProductionRules(vector<Production*>* productions_vector) {
         production_rules[i] = production;
         production_rules_indexes->insert(make_pair(lhs, i));
     }
+    production_rules[0]->is_start_production = true;
 }

@@ -17,7 +17,8 @@ protected:
     Component *master;
     vector<ComponentSlave *> writes_slaves;
     Component *work_slave;
-
+    bool is_owned = false;
+    bool can_init_pipe = false;
 
     bool
     has_write_slave(ComponentSlave *slave) {
@@ -44,15 +45,18 @@ public:
      * handshake method on the master and passing itself to be controlled by the master.*/
     void
     attach_to_master_channel(Component *master) {
-        if (this->master != nullptr) return;
         if (this->master == nullptr) {
-            this->master = this;
-            this->master->handshake_slave_channel(this);
+//            this->master = this;
+//            this->master->handshake_slave_channel(this);
+            can_init_pipe = true;
             return;
         }
 
+        if (is_owned) return;
+
         this->master = master;
         this->master->handshake_slave_channel(this);
+        is_owned = true;
     }
 
     /*handshake the slave after being accepted as master*/
@@ -62,14 +66,15 @@ public:
     }
 
     void start_work_slaves() {
+        if(!can_init_pipe) throw "This component may not initialize the pipe";
         while (true) {
-            void *result = work_slave->process_next_input();
+            void *result = process_next_input();
             if (result == nullptr) break;
 
             for (int i = 0; i < writes_slaves.size(); i++) {
                 writes_slaves[i]->notify(result);
             }
-            write_slave->notify(result);
+            if(write_slave != nullptr) write_slave->notify(result);
         }
     }
 
@@ -79,6 +84,7 @@ public:
     Component(std::fstream *config, std::fstream *input){};
 
     ComponentSlave *write_slave;
+
 };
 
 

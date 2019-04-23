@@ -3,6 +3,7 @@
 //
 
 #include <boost/algorithm/string.hpp>
+#include <parser/Production.h>
 #include "ParserBufferSlave.h"
 
 
@@ -17,9 +18,15 @@ ParserBufferSlave::get_write_stream() {
 
 void
 ParserBufferSlave::notify(void *notification) {
-    string *prod = (string *) notification;
+    vector<Production*> *prods = (vector<Production*>  *) notification;
     if (write_buffer->is_open()) {
-        *write_buffer << prod << endl;
+        for(Production* elem : *prods){
+            for(GrammarSymbol* symbol : *elem->productions->at(0)){
+                *write_buffer << symbol->value << " ";
+            }
+            *write_buffer << endl;
+
+        }
     }
 //    write_buffer->close();
 }

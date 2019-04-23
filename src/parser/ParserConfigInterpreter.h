@@ -20,7 +20,7 @@ private:
     fstream* config;
     vector<Production*>* productions_vector;
     ProductionRules* rules;
-
+    vector<string> *terminals;
     static const regex prod_regex;
     static const regex terminal_regex;
     static const char* epsilon_string;
@@ -35,6 +35,10 @@ public:
 
     vector<string> *
     getTerminals();
+
+
+    GrammarSymbol *
+    get_start_symbol();
 };
 
 

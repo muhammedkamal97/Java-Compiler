@@ -70,13 +70,14 @@ void PDTManufacturer::fillPDTRow(int row, int non_terminal_index){
     string non_terminal = production_rules->production_rules[non_terminal_index]->name->value;
     for(int j = 0; j < single_production->size(); j++){
         string symbol = (*single_production)[j]->at(0)->value;
-        if(terminal_map->find(symbol) != terminal_map->end()){
+        bool is_terminal = terminal_map->find(symbol) != terminal_map->end();
+        if(is_terminal){
             Production *production = getProduction(non_terminal_index, j, single_production, false, false);
             pdt[row][terminal_map->find(symbol)->second] = production;
         }else{
             addFirstTerminals(symbol, row, j,non_terminal_index, single_production);
         }
-        if((containsEpsilon(first->find(symbol)->second))){
+        if(!is_terminal && (containsEpsilon(first->find(symbol)->second))){
             is_follow_slots_filled = true;
             addFollowTerminals(non_terminal, row, non_terminal_index, j, single_production, false);
         }
@@ -95,11 +96,17 @@ void PDTManufacturer::addSyncSlots(string symbol, int row, int non_terminal_inde
     vector<string> *follow_terminals = follow->find(symbol)->second;
     for(int k = 0; k < follow_terminals->size(); k++){
         Production *production = getProduction(non_terminal_index, grammer_symbol_vector_index, single_production, false, true);
+        int i = row,j;
         if((*follow_terminals)[k].compare("$") == 0){
-            pdt[row][terminal_map->size()] = production;
+            j= terminal_map->size();
+//            pdt[row][terminal_map->size()] = production;
         } else{
-            pdt[row][terminal_map->find((*follow_terminals)[k])->second] = production;
+            j=terminal_map->find((*follow_terminals)[k])->second;
+//            pdt[row][terminal_map->find((*follow_terminals)[k])->second] = production;
         }
+
+        if(pdt[i][j] == nullptr) return;
+        pdt[i][j] = production;
     }
 }
 Production *PDTManufacturer::getProduction(int non_terminal_index, int grammer_symbol_vector_index, vector <vector< GrammarSymbol * > *> *productions, bool epsilon, bool is_sync){
