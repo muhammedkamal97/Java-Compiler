@@ -8,6 +8,7 @@
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+#include <iostream>
 #include "Follow.h"
 
 
@@ -94,14 +95,12 @@ compute_follow(ProductionRules *productions, map<string, vector<string>*>* first
         }
     }
 
-
     // Convert dependency graph to DAG and perform topological sorting
 
     map<int, vector<int>*>* component_to_nodes = new map<int, vector<int>*>;
     map<int, set<string>*>* component_follow_set_map = new map<int, set<string>*>;
     Graph dag = to_dag(graph, non_terminals_count, component_to_nodes);
     vector<int>* topological_order = topological_sort(dag);
-
 
     // Resolve follow set dependencies
 
@@ -118,15 +117,14 @@ compute_follow(ProductionRules *productions, map<string, vector<string>*>* first
             for (auto symbol : *non_terminal_follow_set) component_follow_set->insert(symbol);
         }
 
+
         // Resolve dependencies from other components
         if (i != 0) {   // Sink component has no dependencies
             boost::graph_traits<Graph>::vertices_size_type dag_nodes_count = boost::num_vertices(dag);
-            for (int i = 0; i < dag_nodes_count; i++) {
-                auto neighbours = boost::adjacent_vertices(i, dag);
-                for (auto neighbour : make_iterator_range(neighbours)) {
-                    set<string>* neighbour_follow_set = component_follow_set_map->at(neighbour);
-                    for (auto symbol : *neighbour_follow_set) component_follow_set->insert(symbol);
-                }
+            auto neighbours = boost::adjacent_vertices(component, dag);
+            for (auto neighbour : make_iterator_range(neighbours)) {
+                set<string>* neighbour_follow_set = component_follow_set_map->at(neighbour);
+                for (auto symbol : *neighbour_follow_set) component_follow_set->insert(symbol);
             }
         }
 
@@ -168,7 +166,7 @@ Graph to_dag(Graph graph, int nodes_count, map<int, vector<int>*>* component_to_
         for (auto v2 : make_iterator_range(neighbours)) {
             int component2 = strong_components[v2];
             if (component1 != component2)
-                boost::add_edge (component2, component1, graph);
+                boost::add_edge (component1, component2, dag);
         }
     }
 

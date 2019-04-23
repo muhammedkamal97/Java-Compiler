@@ -35,8 +35,8 @@ protected:
 TEST_F(FollowSanityTest, computesCorrectly) {
     ASSERT_THAT(*follow_map->at("E"), ::testing::ElementsAre("$", ")"));
     ASSERT_THAT(*follow_map->at("E1"), ::testing::ElementsAre("$", ")"));
-    ASSERT_THAT(*follow_map->at("T"), ::testing::ElementsAre("+", ")", "$"));
-    ASSERT_THAT(*follow_map->at("T1"), ::testing::ElementsAre("+", ")", "$"));
-    ASSERT_THAT(*follow_map->at("F"), ::testing::ElementsAre("$", ")", "+", "*"));
+    ASSERT_THAT(*follow_map->at("T"), ::testing::ElementsAre("$", ")", "+"));
+    ASSERT_THAT(*follow_map->at("T1"), ::testing::ElementsAre("$", ")", "+"));
+    ASSERT_THAT(*follow_map->at("F"), ::testing::ElementsAre("$", ")", "*", "+"));
 }
 
