@@ -25,6 +25,9 @@ PredictiveParser::has_next_production() {
 
 vector<Production *> *
 PredictiveParser::next_production(Token *tkn) {
+    if (terminal_map->find(tkn->type->name) == terminal_map->end())
+        throw std::runtime_error(
+                std::string("The terminal [" + tkn->type->name + "] is missing from the grammar definition."));
 
     GrammarSymbol *gram_symbol = productions_stack->top();
     auto res_prod = new vector<Production *>();
@@ -37,8 +40,8 @@ PredictiveParser::next_production(Token *tkn) {
     } else if (gram_symbol->type == Terminal) {
         if ((gram_symbol->value) == tkn->type->name) {
             productions_stack->pop();
-            return new vector<Production*>();
-        }else{
+            return new vector<Production *>();
+        } else {
             error(tkn, nullptr);
             return next_production(tkn);
         }
@@ -64,7 +67,7 @@ PredictiveParser::next_production(Token *tkn) {
         return res_prod;
     }
     error(tkn, nullptr);
-    return new vector<Production*>();
+    return new vector<Production *>();
 }
 
 void
@@ -75,7 +78,7 @@ PredictiveParser::error(Token *tkn, Production *prod) {
 
 void
 PredictiveParser::push_to_stack(Production *production) {
-    if(production->productions->size() == 0) return;
+    if (production->productions->size() == 0) return;
     auto symbols = production->productions->at(0);
 
     auto it = symbols->rbegin();
