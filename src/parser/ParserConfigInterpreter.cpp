@@ -6,7 +6,6 @@
 #include "ProductionRules.h"
 
 
-#include "LexicalConfigInterpreter.h"
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string.hpp>

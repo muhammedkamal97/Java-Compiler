@@ -2,7 +2,7 @@
 // Created by mario_hunter on 4/19/19.
 //
 
-#include "Production.h"
+#include "parser/Production.h"
 #include "PDTManufacturer.h"
 #include "First.h"
 #include "Follow.h"
@@ -11,7 +11,7 @@
 PDTManufacturer::PDTManufacturer(ProductionRules *production_rules,vector<string> * terminals) {
     this->production_rules = production_rules;
     this->first = compute_first(this->production_rules);
-    this->follow = compute_follow(this->production_rules);
+    this->follow = compute_follow(this->production_rules,this->first);
     this->terminals = terminals;
     vector<string> temp(production_rules->non_terminals->begin(),
                         production_rules->non_terminals->end());

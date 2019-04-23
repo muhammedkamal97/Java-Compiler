@@ -10,8 +10,8 @@
 #include <map>
 
 #include<string.h>
-#include "ProductionRules.h"
-#include "Production.h"
+#include "parser/ProductionRules.h"
+#include "parser/Production.h"
 #include "unordered_map"
 
 using namespace std;
