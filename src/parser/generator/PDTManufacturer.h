@@ -39,7 +39,8 @@ private:
     Production *getProduction(int non_terminal_index, int grammer_symbol_vector_index, vector <vector< GrammarSymbol * > *> *productions, bool epsilon, bool is_sync);
     Production *cloneProduction(Production *old_production);
     void addSyncSlots(string symbol, int row, int non_terminal_index, int grammer_symbol_vector_index, vector <vector< GrammarSymbol * > *> *single_production);
-
+    unordered_map<int, string> getReversedMap(unordered_map<string, int> *normal_map);
+    vector<string> *clearTerminals(vector<string> *terminals);
 public:
     PDTManufacturer(ProductionRules *production_rules, vector<string> * terminals);
 
@@ -47,6 +48,7 @@ public:
     unordered_map<string, int> *getNon_terminal_map() const;
 
     unordered_map<string, int> *getTerminal_map() const;
+    void printPDT();
 
 
 };

@@ -6,19 +6,36 @@
 #include "PDTManufacturer.h"
 #include "First.h"
 #include "Follow.h"
+#include <iostream>
 
 
+using namespace std;
 PDTManufacturer::PDTManufacturer(ProductionRules *production_rules, vector<string> *terminals) {
     this->production_rules = production_rules;
     this->first = compute_first(this->production_rules);
     this->follow = compute_follow(this->production_rules, this->first);
-    this->terminals = terminals;
+    this->terminals = clearTerminals(terminals);
     vector<string> temp(production_rules->non_terminals->begin(),
                         production_rules->non_terminals->end());
     this->non_terminals = temp;
     this->non_terminal_map = new unordered_map<string, int>();
     this->terminal_map = new unordered_map<string, int>();
     createPDT();
+    printPDT();
+}
+
+vector<string> *PDTManufacturer::clearTerminals(vector<string> *terminals){
+    set<string> temp;
+    vector<string> *new_terminals = new vector<string>();
+    for(int i = 0; i < terminals->size(); i++){
+        temp.insert((*terminals)[i]);
+    }
+    set<string>::iterator it = temp.begin();
+    while (it != temp.end()){
+        new_terminals->push_back(*it);
+        it++;
+    }
+    return new_terminals;
 }
 
 
@@ -222,3 +239,40 @@ PDTManufacturer::getTerminal_map() const {
     return terminal_map;
 }
 
+void PDTManufacturer::printPDT(){
+    unordered_map<int, string> reversed_terminals = getReversedMap(terminal_map);
+    for (int i = 0; i < reversed_terminals.size(); i++) {
+        cout<< "        " << reversed_terminals.at(i);
+    }
+    cout << "\n";
+    unordered_map<int, string> reversed_non_terminals = getReversedMap(non_terminal_map);
+    for(int i = 0; i < non_terminal_map->size(); i++){
+        cout<<reversed_non_terminals.at(i)<<"       ";
+        for(int j = 0; j <= terminal_map->size(); j++){
+            if(pdt[i][j] == NULL){
+                cout<<"error  ";
+            } else {
+                if (pdt[i][j]->has_epsilon) {
+                    cout << "epsilon    ";
+                } else if(pdt[i][j]->is_sync){
+                    cout << "sync   ";
+                }else {
+                    for (int k = 0; k < (*pdt[i][j]->productions)[0]->size(); k++) {
+                        cout << (*pdt[i][j]->productions)[0]->at(k)->value;
+                    }
+
+                }
+            }
+            cout << "      ";
+        }
+        cout <<"\n";
+    }
+}
+
+unordered_map<int, string> PDTManufacturer::getReversedMap(unordered_map<string, int> *normal_map){
+    unordered_map<int, string> new_map;
+    for (unordered_map<string, int>::iterator itr = normal_map->begin(); itr != normal_map->end(); ++itr) {
+        new_map.insert({itr->second, itr->first});
+    }
+    return new_map;
+}
