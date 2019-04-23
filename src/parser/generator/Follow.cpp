@@ -85,7 +85,7 @@ compute_follow(ProductionRules *productions, map<string, vector<string>*>* first
                     }
                 }
 
-                if (j == partial_production->size()) {      // Reached end of the partial production
+                if (j == partial_production->size() && current_symbol_string != "\\L") {      // Reached end of the partial production
                     // Add dependency
                     int source_node = node_id_map->at(current_symbol_string);
                     int destination_node = node_id_map->at(lhs_non_terminal);

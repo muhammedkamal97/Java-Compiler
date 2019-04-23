@@ -45,7 +45,7 @@ public:
      * handshake method on the master and passing itself to be controlled by the master.*/
     void
     attach_to_master_channel(Component *master) {
-        if (this->master == nullptr) {
+        if (master == nullptr) {
 //            this->master = this;
 //            this->master->handshake_slave_channel(this);
             can_init_pipe = true;

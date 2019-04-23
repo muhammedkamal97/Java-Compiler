@@ -83,6 +83,7 @@ ParserConfigInterpreter::parse_prouction(string line) {
                 if (token == epsilon_string) {
                     production->has_epsilon = true;
                     grammarSymbol->is_epsilon = true;
+                    production->productions->pop_back(); //TODO get a more elegant solution
                 }else{
                     terminals->push_back(token);
                 }
@@ -91,7 +92,7 @@ ParserConfigInterpreter::parse_prouction(string line) {
                 grammarSymbol = new GrammarSymbol(token, symbol_type::NonTerminal);
             }
 
-            production->productions->back()->push_back(grammarSymbol);
+            if(!grammarSymbol->is_epsilon) production->productions->back()->push_back(grammarSymbol);
         }
     }
     productions_vector->push_back(production);

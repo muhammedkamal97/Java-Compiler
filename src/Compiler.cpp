@@ -31,6 +31,7 @@ Compiler::compile(fstream *input) {
 //    lexical->attach_to_slave_port(parser);
 
     parser->start_work_slaves();
+    int x =5; //TODO remove it
 }
 
 Compiler::Compiler() {
