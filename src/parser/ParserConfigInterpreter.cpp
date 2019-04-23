@@ -80,7 +80,10 @@ ParserConfigInterpreter::parse_prouction(string line) {
             if (regex_match(token, terminal_regex)) {
                 token = token.substr(1, token.length() - 2);
                 grammarSymbol = new GrammarSymbol(token, symbol_type::Terminal);
-                if (token == epsilon_string) production->has_epsilon = true;
+                if (token == epsilon_string) {
+                    production->has_epsilon = true;
+                    grammarSymbol->is_epsilon = true;
+                }
             }
             else {
                 grammarSymbol = new GrammarSymbol(token, symbol_type::NonTerminal);

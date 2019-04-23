@@ -22,9 +22,17 @@ compute_first(ProductionRules *productions) {
 
     for(auto it : first_sets){
         vector<string>* temp = new vector<string>();
+        // ensure that epsilon(\\L) will always be at index 0
+        // if it exists
+        if(contain_epsilon(it.second)){
+            temp->push_back("\\L");
+            it.second.erase("\\L");
+        }
+
         for(string st : it.second){
             temp->push_back(st);
         }
+
         (*result)[it.first] = temp;
     }
     return result;
@@ -38,31 +46,31 @@ void first(map<string,set<string>> *first_sets,string non_terminal,
 
     int non_terminal_index = (*productions->production_rules_indexes)[non_terminal];
     Production non_terminal_productions =
-                                     *(*(productions->production_rules) + non_terminal_index);
+                                     *((productions->production_rules)[non_terminal_index]);
 
     if((*dp)[non_terminal]){
         return;
     }
     (*dp)[non_terminal] = true;
 
-    for(vector<string> * production : non_terminal_productions.productions){
-        for(string symbol : *production){
-            string s = symbol;
-            if(is_terminal(symbol,productions) && symbol != "\\L"){
-                (*first_sets)[non_terminal].insert(symbol);
+    for(vector<GrammarSymbol *> * production : *non_terminal_productions.productions){
+        for(GrammarSymbol* symbol : *production){
+            string s = symbol->value;
+            if(is_terminal(symbol->value,productions) && symbol->value != "\\L"){
+                (*first_sets)[non_terminal].insert(symbol->value);
                 if(contain_epsilon((*first_sets)[non_terminal])){
                     (*first_sets)[non_terminal].erase("\\L");
                 }
                 break;
-            }else if(symbol == "\\L"){
-                (*first_sets)[non_terminal].insert(symbol);
+            }else if(symbol->value == "\\L"){
+                (*first_sets)[non_terminal].insert(symbol->value);
                 break;
             }
-            first(first_sets,symbol,productions,dp);
-            for(string st : (*first_sets)[symbol]){
+            first(first_sets,symbol->value,productions,dp);
+            for(string st : (*first_sets)[symbol->value]){
                 (*first_sets)[non_terminal].insert(st);
             }
-            if(!contain_epsilon((*first_sets)[symbol])){
+            if(!contain_epsilon((*first_sets)[symbol->value])){
                 if(contain_epsilon((*first_sets)[non_terminal])){
                     (*first_sets)[non_terminal].erase("\\L");
                 }
